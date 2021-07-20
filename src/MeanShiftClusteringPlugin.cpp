@@ -1,7 +1,7 @@
 #include "MeanShiftClusteringPlugin.h"
 
-#include "PointsPlugin.h"
-#include "ClustersPlugin.h"
+#include "PointData.h"
+#include "ClusterData.h"
 
 #include <QtCore>
 #include <QMessageBox>
@@ -18,7 +18,9 @@
 
 #define NO_FILE 0
 
-Q_PLUGIN_METADATA(IID "nl.tudelft.ClusteringPlugin")
+Q_PLUGIN_METADATA(IID "nl.tudelft.MeanShift")
+
+using namespace hdps;
 
 // =============================================================================
 // View
@@ -36,34 +38,16 @@ void MeanShiftAnalysisPlugin::init()
     offscreen.bindContext();
     _meanShift.init();
     offscreen.releaseContext();
+
+    registerDataEventByType(PointType, std::bind(&MeanShiftAnalysisPlugin::onDataEvent, this, std::placeholders::_1));
 }
 
-void MeanShiftAnalysisPlugin::dataAdded(const QString name)
+void MeanShiftAnalysisPlugin::onDataEvent(DataEvent* dataEvent)
 {
-    _settings.addDataOption(name);
-}
-
-void MeanShiftAnalysisPlugin::dataChanged(const QString name)
-{
-
-}
-
-void MeanShiftAnalysisPlugin::dataRemoved(const QString name)
-{
-    
-}
-
-void MeanShiftAnalysisPlugin::selectionChanged(const QString dataName)
-{
-
-}
-
-
-QStringList MeanShiftAnalysisPlugin::supportedDataKinds()
-{
-    QStringList supportedKinds;
-    supportedKinds << "Points";
-    return supportedKinds;
+    if (dataEvent->getType() == EventType::DataAdded)
+    {
+        _settings.addDataOption(dataEvent->dataSetName);
+    }
 }
 
 SettingsWidget* const MeanShiftAnalysisPlugin::getSettings()
@@ -88,10 +72,9 @@ void MeanShiftAnalysisPlugin::startComputation()
         return;
     }
 
-    IndexSet& set = dynamic_cast<IndexSet&>(_core->requestSet(setName));
-    PointsPlugin& points = set.getData();
+    Points& inputData = _core->requestData<Points>(setName);
 
-    if (points.getNumDimensions() != 2)
+    if (inputData.getNumDimensions() != 2)
     {
         QMessageBox warning;
         warning.setText("Selected data must be 2-dimensional.");
@@ -99,28 +82,26 @@ void MeanShiftAnalysisPlugin::startComputation()
         return;
     }
 
-    std::vector<hdps::Vector2f>* points2D = (std::vector<hdps::Vector2f>*) &points.getData();
+    std::vector<hdps::Vector2f> data;
+    inputData.extractDataForDimensions(data, 0, 1);
 
-    _meanShift.setData(points2D);
+    _meanShift.setData(&data);
 
     std::vector<std::vector<unsigned int>> clusters;
 
     offscreen.bindContext();
-    _meanShift.cluster(*points2D, clusters);
+    _meanShift.cluster(data, clusters);
     offscreen.releaseContext();
 
-    QString clusterSetName = _core->addData("Clusters", "ClusterSet");
-    const ClusterSet& clusterSet = dynamic_cast<ClusterSet&>(_core->requestSet(clusterSetName));
-    ClustersPlugin& plugin = clusterSet.getData();
+    QString clusterSetName = _core->addData("Cluster", "ClusterSet");
+    Clusters& clusterSet = _core->requestData<Clusters>(clusterSetName);
 
     for (auto c : clusters)
     {
-        IndexSet* cluster = (IndexSet*)points.createSet();
-        for (int j = 0; j < c.size(); j++)
-        {
-            cluster->indices.push_back(c[j]);
-        }
-        plugin.addCluster(cluster);
+        Cluster cluster;
+        cluster.indices = c;
+
+        clusterSet.addCluster(cluster);
     }
 
     _core->notifyDataAdded(clusterSetName);

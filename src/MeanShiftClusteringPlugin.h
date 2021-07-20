@@ -29,11 +29,7 @@ public:
     
     void init() override;
 
-    void dataAdded(const QString name) Q_DECL_OVERRIDE;
-    void dataChanged(const QString name) Q_DECL_OVERRIDE;
-    void dataRemoved(const QString name) Q_DECL_OVERRIDE;
-    void selectionChanged(const QString dataName) Q_DECL_OVERRIDE;
-    QStringList supportedDataKinds() Q_DECL_OVERRIDE;
+    void onDataEvent(hdps::DataEvent* dataEvent);
 
     SettingsWidget* const getSettings() override;
 public slots:
