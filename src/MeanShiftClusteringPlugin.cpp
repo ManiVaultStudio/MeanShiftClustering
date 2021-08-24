@@ -3,17 +3,16 @@
 #include "PointData.h"
 #include "ClusterData.h"
 
+#include <QDebug>
 #include <QtCore>
 #include <QMessageBox>
-#include <QtDebug>
-
+#include <QHBoxLayout>
 
 #include <assert.h>
 #include <algorithm>
 #include <functional>
 #include <random>
 #include <vector>
-
 #include <unordered_map>
 
 #define NO_FILE 0
@@ -21,97 +20,100 @@
 Q_PLUGIN_METADATA(IID "nl.tudelft.MeanShift")
 
 using namespace hdps;
+using namespace hdps::gui;
 
-// =============================================================================
-// View
-// =============================================================================
-
-MeanShiftAnalysisPlugin::~MeanShiftAnalysisPlugin(void)
+MeanShiftClusteringPlugin::MeanShiftClusteringPlugin(const PluginFactory* factory) :
+    AnalysisPlugin(factory),
+    _offscreenBuffer(),
+    _meanShift(),
+    _settingsAction(this)
 {
-    
 }
 
-void MeanShiftAnalysisPlugin::init()
+MeanShiftClusteringPlugin::~MeanShiftClusteringPlugin(void)
 {
-    connect(&_settings, SIGNAL(startClustering()), this, SLOT(startComputation()));
+}
 
-    offscreen.bindContext();
+void MeanShiftClusteringPlugin::init()
+{
+    // Create clusters output dataset
+    setOutputDatasetName(_core->addData("Cluster", getInputDatasetName()));
+
+    // Get input and output datasets
+    auto& inputDataset  = getInputDataset<Points>();
+    auto& outputDataset = getOutputDataset<Clusters>();
+
+    outputDataset.addAction(_settingsAction);
+
+    connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, inputDataset]() {
+        _settingsAction.setEnabled(false);
+
+        setTaskProgress(0.0f);
+        setTaskDescription("Initializing");
+
+        if (inputDataset.getNumDimensions() != 2)
+        {
+            QMessageBox warning;
+            warning.setText("Selected data must be 2-dimensional.");
+            warning.exec();
+
+            setTaskAborted();
+
+            _settingsAction.setEnabled(true);
+            return;
+        }
+
+        setTaskDescription("Extracting data");
+
+        std::vector<hdps::Vector2f> data;
+        inputDataset.extractDataForDimensions(data, 0, 1);
+
+        setTaskProgress(0.1f);
+
+        setTaskDescription("Clustering");
+
+        _meanShift.setData(&data);
+
+        std::vector<std::vector<unsigned int>> clusters;
+
+        setTaskProgress(0.2f);
+
+        _offscreenBuffer.bindContext();
+        _meanShift.cluster(data, clusters);
+        _offscreenBuffer.releaseContext();
+
+        setTaskProgress(0.7f);
+
+        QString clusterSetName = _core->addData("Cluster", "ClusterSet");
+
+        //Clusters& clusterSet = _core->requestData<Clusters>(_outputDatsetName);
+
+        //for (auto c : clusters)
+        //{
+            //Cluster cluster;
+            //cluster.indices = c;
+
+            //clusterSet.addCluster(cluster);
+        //}
+
+        setTaskFinished();
+
+        _settingsAction.setEnabled(true);
+    });
+
+    _offscreenBuffer.bindContext();
     _meanShift.init();
-    offscreen.releaseContext();
-
-    registerDataEventByType(PointType, std::bind(&MeanShiftAnalysisPlugin::onDataEvent, this, std::placeholders::_1));
+    _offscreenBuffer.releaseContext();
 }
 
-void MeanShiftAnalysisPlugin::onDataEvent(DataEvent* dataEvent)
+AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()
 {
-    if (dataEvent->getType() == EventType::DataAdded)
-    {
-        _settings.addDataOption(dataEvent->dataSetName);
-    }
+    return new MeanShiftClusteringPlugin(this);
 }
 
-SettingsWidget* const MeanShiftAnalysisPlugin::getSettings()
+hdps::DataTypes MeanShiftClusteringPluginFactory::supportedDataTypes() const
 {
-    return &_settings;
-}
-
-void MeanShiftAnalysisPlugin::dataSetPicked(const QString& name)
-{
-
-}
-
-void MeanShiftAnalysisPlugin::startComputation()
-{
-    QString setName = _settings.getCurrentDataOption();
-
-    // Do nothing if we have no data set selected
-    if (setName.isEmpty()) {
-        QMessageBox warning;
-        warning.setText("No data is selected for clustering.");
-        warning.exec();
-        return;
-    }
-
-    Points& inputData = _core->requestData<Points>(setName);
-
-    if (inputData.getNumDimensions() != 2)
-    {
-        QMessageBox warning;
-        warning.setText("Selected data must be 2-dimensional.");
-        warning.exec();
-        return;
-    }
-
-    std::vector<hdps::Vector2f> data;
-    inputData.extractDataForDimensions(data, 0, 1);
-
-    _meanShift.setData(&data);
-
-    std::vector<std::vector<unsigned int>> clusters;
-
-    offscreen.bindContext();
-    _meanShift.cluster(data, clusters);
-    offscreen.releaseContext();
-
-    QString clusterSetName = _core->addData("Cluster", "ClusterSet");
-    Clusters& clusterSet = _core->requestData<Clusters>(clusterSetName);
-
-    for (auto c : clusters)
-    {
-        Cluster cluster;
-        cluster.indices = c;
-
-        clusterSet.addCluster(cluster);
-    }
-
-    _core->notifyDataAdded(clusterSetName);
-}
-
-// =============================================================================
-// Factory
-// =============================================================================
-
-AnalysisPlugin* MeanShiftAnalysisPluginFactory::produce()
-{
-    return new MeanShiftAnalysisPlugin();
+    DataTypes supportedTypes;
+    supportedTypes.append(PointType);
+    return supportedTypes;
 }
