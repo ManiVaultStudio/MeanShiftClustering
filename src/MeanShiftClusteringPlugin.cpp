@@ -104,14 +104,19 @@ void MeanShiftClusteringPlugin::init()
         // Remove existing clusters
         outputDataset.getClusters().clear();
         
+        std::int32_t clusterIndex = 0;
+
         // Add found clusters
         for (auto c : clusters)
         {
             Cluster cluster;
 
+            cluster._name   = QString("cluster %1").arg(QString::number(clusterIndex + 1));
             cluster.indices = c;
 
             outputDataset.addCluster(cluster);
+
+            clusterIndex++;
         }
 
         // Inform observers that the clusters data changed
