@@ -37,20 +37,37 @@ MeanShiftClusteringPlugin::~MeanShiftClusteringPlugin(void)
 void MeanShiftClusteringPlugin::init()
 {
     // Create clusters output dataset
-    setOutputDatasetName(_core->addData("Cluster", getInputDatasetName()));
+    setOutputDatasetName(_core->addData("Cluster", "Clusters", getInputDatasetName()));
+
+    _core->notifyDataAdded(getOutputDatasetName());
 
     // Get input and output datasets
     auto& inputDataset  = getInputDataset<Points>();
     auto& outputDataset = getOutputDataset<Clusters>();
 
+    // Inject the setting action into the output dataset
     outputDataset.addAction(_settingsAction);
 
-    connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, inputDataset]() {
+    /*
+    connect(&_meanShift, &MeanShift::progressSection, this, [this](const QString& section) {
+        setTaskDescription(section);
+    });
+
+    connect(&_meanShift, &MeanShift::progressPercentage, this, [this](const float& percentage) {
+        setTaskProgress(percentage);
+    });
+    */
+
+    connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, &inputDataset, &outputDataset]() {
+
+        // Disable the settings when computing
         _settingsAction.setEnabled(false);
 
+        setTaskName("Mean-shift clustering");
         setTaskProgress(0.0f);
         setTaskDescription("Initializing");
 
+        // Data sanity check
         if (inputDataset.getNumDimensions() != 2)
         {
             QMessageBox warning;
@@ -84,17 +101,21 @@ void MeanShiftClusteringPlugin::init()
 
         setTaskProgress(0.7f);
 
-        QString clusterSetName = _core->addData("Cluster", "ClusterSet");
+        // Remove existing clusters
+        outputDataset.getClusters().clear();
+        
+        // Add found clusters
+        for (auto c : clusters)
+        {
+            Cluster cluster;
 
-        //Clusters& clusterSet = _core->requestData<Clusters>(_outputDatsetName);
+            cluster.indices = c;
 
-        //for (auto c : clusters)
-        //{
-            //Cluster cluster;
-            //cluster.indices = c;
+            outputDataset.addCluster(cluster);
+        }
 
-            //clusterSet.addCluster(cluster);
-        //}
+        // Inform observers that the clusters data changed
+        _core->notifyDataChanged(getOutputDatasetName());
 
         setTaskFinished();
 

@@ -12,7 +12,7 @@ class SettingsAction : public GroupAction
 public:
     SettingsAction(MeanShiftClusteringPlugin* meanShiftAnalysisPlugin);
 
-    QMenu* getContextMenu();
+    QMenu* getContextMenu(QWidget* parent = nullptr) override;
 
     DecimalAction& getSigmaAction() { return _sigmaAction; }
     TriggerAction& getComputeAction() { return _computeAction; }
