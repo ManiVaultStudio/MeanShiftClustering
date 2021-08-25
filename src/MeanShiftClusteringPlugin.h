@@ -21,6 +21,10 @@ public:
     
     void init() override;
 
+    hdps::MeanShift& getMeanShift() {
+        return _meanShift;
+    };
+
 private:
     OffscreenBuffer     _offscreenBuffer;
     hdps::MeanShift     _meanShift;

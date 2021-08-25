@@ -131,6 +131,7 @@ void MeanShiftClusteringPlugin::init()
 
         setTaskFinished();
 
+        _settingsAction.setComputationUpToDate(true);
         _settingsAction.setEnabled(true);
     });
 
