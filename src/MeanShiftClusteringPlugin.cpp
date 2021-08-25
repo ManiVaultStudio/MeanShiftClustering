@@ -107,6 +107,11 @@ void MeanShiftClusteringPlugin::init()
         
         std::int32_t clusterIndex = 0;
 
+        //const auto hueStep = 360.0f / clusters.size();
+
+        // Create random number generator for pseudo random colors
+        QRandomGenerator randomGenerator(500);
+
         // Add found clusters
         for (auto c : clusters)
         {
@@ -115,9 +120,9 @@ void MeanShiftClusteringPlugin::init()
             cluster._name   = QString("cluster %1").arg(QString::number(clusterIndex + 1));
             cluster.indices = c;
 
-            const auto randomHue        = QRandomGenerator::global()->bounded(360);
-            const auto randomSaturation = QRandomGenerator::global()->bounded(150, 255);
-            const auto randomLightness  = QRandomGenerator::global()->bounded(100, 200);
+            const auto randomHue        = randomGenerator.bounded(360);
+            const auto randomSaturation = randomGenerator.bounded(150, 255);
+            const auto randomLightness  = randomGenerator.bounded(50, 200);
 
             cluster._color = QColor::fromHsl(randomHue, randomSaturation, randomLightness);
 
