@@ -7,6 +7,7 @@
 #include <QtCore>
 #include <QMessageBox>
 #include <QHBoxLayout>
+#include <QRandomGenerator>
 
 #include <assert.h>
 #include <algorithm>
@@ -113,6 +114,12 @@ void MeanShiftClusteringPlugin::init()
 
             cluster._name   = QString("cluster %1").arg(QString::number(clusterIndex + 1));
             cluster.indices = c;
+
+            const auto randomHue        = QRandomGenerator::global()->bounded(360);
+            const auto randomSaturation = QRandomGenerator::global()->bounded(150, 255);
+            const auto randomLightness  = QRandomGenerator::global()->bounded(100, 200);
+
+            cluster._color = QColor::fromHsl(randomHue, randomSaturation, randomLightness);
 
             outputDataset.addCluster(cluster);
 
