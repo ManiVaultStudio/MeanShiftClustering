@@ -31,7 +31,7 @@ MeanShiftClusteringPlugin::MeanShiftClusteringPlugin(const PluginFactory* factor
 {
 }
 
-MeanShiftClusteringPlugin::~MeanShiftClusteringPlugin(void)
+MeanShiftClusteringPlugin::~MeanShiftClusteringPlugin()
 {
 }
 
