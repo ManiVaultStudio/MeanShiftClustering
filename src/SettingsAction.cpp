@@ -8,10 +8,21 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     GroupAction(meanShiftClusteringPlugin, true),
     _meanShiftAnalysisPlugin(meanShiftClusteringPlugin),
     _sigmaAction(this, "Sigma", 0.001, 1.0, 0.15, 0.15, 2),
+    _colorByAction(this, "Color by", QStringList({"Pseudo-random colors", "Color map"}), "Pseudo-random colors", "Pseudo-random colors"),
+    _colorMapAction(this, "Color map"),
+    _randomSeedAction(this, "Random seed"),
     _computeAction(this, "Compute"),
     _computationUpToDate(false)
 {
     setText("Mean-shift");
+
+    const auto updateReadOnly = [this]() -> void {
+        const auto enabled  = !isReadOnly();
+        const auto colorBy  = static_cast<ColorBy>(_colorByAction.getCurrentIndex());
+
+        _colorMapAction.setEnabled(enabled && colorBy == ColorBy::ColorMap);
+        _randomSeedAction.setEnabled(enabled && colorBy == ColorBy::PsuedoRandomColors);
+    };
 
     const auto update = [this]() -> void {
         _meanShiftAnalysisPlugin->getMeanShift().setSigma(_sigmaAction.getValue());
@@ -22,7 +33,12 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
         update();
     });
 
+    connect(&_colorByAction, &OptionAction::currentIndexChanged, this, [this, updateReadOnly](const std::int32_t& currentIndex) {
+        updateReadOnly();
+    });
+
     update();
+    updateReadOnly();
 }
 
 QMenu* SettingsAction::getContextMenu(QWidget* parent /*= nullptr*/)

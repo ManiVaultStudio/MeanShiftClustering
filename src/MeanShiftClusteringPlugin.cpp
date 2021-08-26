@@ -7,7 +7,6 @@
 #include <QtCore>
 #include <QMessageBox>
 #include <QHBoxLayout>
-#include <QRandomGenerator>
 
 #include <assert.h>
 #include <algorithm>
@@ -27,7 +26,8 @@ MeanShiftClusteringPlugin::MeanShiftClusteringPlugin(const PluginFactory* factor
     AnalysisPlugin(factory),
     _offscreenBuffer(),
     _meanShift(),
-    _settingsAction(this)
+    _settingsAction(this),
+    _rng(0)
 {
 }
 
@@ -59,7 +59,33 @@ void MeanShiftClusteringPlugin::init()
     });
     */
 
-    connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, &inputDataset, &outputDataset]() {
+    const auto updateColors = [this, &outputDataset]() -> void {
+        const auto colorBy = static_cast<SettingsAction::ColorBy>(_settingsAction.getColorByAction().getCurrentIndex());
+
+        switch (colorBy) {
+            case SettingsAction::ColorBy::PsuedoRandomColors:
+            {
+                _rng.seed(_settingsAction.getRandomSeedAction().getValue());
+
+                for (auto& cluster : outputDataset.getClusters()) {
+                    const auto randomHue        = _rng.bounded(360);
+                    const auto randomSaturation = _rng.bounded(150, 255);
+                    const auto randomLightness  = _rng.bounded(50, 200);
+
+                    cluster._color = QColor::fromHsl(randomHue, randomSaturation, randomLightness);
+                }
+
+                break;
+            }
+
+            case SettingsAction::ColorBy::ColorMap:
+            {
+                break;
+            }
+        }
+    };
+
+    connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, &inputDataset, &outputDataset, updateColors]() {
 
         // Disable the settings when computing
         _settingsAction.setEnabled(false);
@@ -107,11 +133,6 @@ void MeanShiftClusteringPlugin::init()
         
         std::int32_t clusterIndex = 0;
 
-        //const auto hueStep = 360.0f / clusters.size();
-
-        // Create random number generator for pseudo random colors
-        QRandomGenerator randomGenerator(500);
-
         // Add found clusters
         for (auto c : clusters)
         {
@@ -120,24 +141,31 @@ void MeanShiftClusteringPlugin::init()
             cluster._name       = QString("cluster %1").arg(QString::number(clusterIndex + 1));
             cluster._indices    = c;
 
-            const auto randomHue        = randomGenerator.bounded(360);
-            const auto randomSaturation = randomGenerator.bounded(150, 255);
-            const auto randomLightness  = randomGenerator.bounded(50, 200);
-
-            cluster._color = QColor::fromHsl(randomHue, randomSaturation, randomLightness);
-
             outputDataset.addCluster(cluster);
 
             clusterIndex++;
         }
 
-        // Inform observers that the clusters data changed
+        updateColors();
+
         _core->notifyDataChanged(getOutputDatasetName());
 
         setTaskFinished();
 
         _settingsAction.setComputationUpToDate(true);
         _settingsAction.setEnabled(true);
+    });
+
+    connect(&_settingsAction.getColorByAction(), &OptionAction::currentIndexChanged, this, [this, updateColors](const std::int32_t& currentIndex) {
+        updateColors();
+
+        _core->notifyDataChanged(getOutputDatasetName());
+    });
+
+    connect(&_settingsAction.getRandomSeedAction(), &IntegralAction::valueChanged, this, [this, updateColors](const std::int32_t& value) {
+        updateColors();
+
+        _core->notifyDataChanged(getOutputDatasetName());
     });
 
     _offscreenBuffer.bindContext();

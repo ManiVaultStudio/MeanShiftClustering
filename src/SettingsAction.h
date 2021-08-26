@@ -17,6 +17,14 @@ using namespace hdps::gui;
 class SettingsAction : public GroupAction
 {
 public:
+
+    /** Color options */
+    enum class ColorBy {
+        PsuedoRandomColors,     /** Use pseudo-random colors */
+        ColorMap                /** Color by continuous color map */
+    };
+
+public:
     /** 
      * Constructor
      * @param meanShiftClusteringPlugin Pointer to mean-shift clustering plugin
@@ -42,11 +50,17 @@ public:
 public: // Action getters
 
     DecimalAction& getSigmaAction() { return _sigmaAction; }
+    OptionAction& getColorByAction() { return _colorByAction; }
+    ColorMapAction& getColorMapAction() { return _colorMapAction; }
+    IntegralAction& getRandomSeedAction() { return _randomSeedAction; }
     TriggerAction& getComputeAction() { return _computeAction; }
 
 protected:
     MeanShiftClusteringPlugin*  _meanShiftAnalysisPlugin;       /** Pointer to mean-shift clustering plugin */
     DecimalAction               _sigmaAction;                   /** Sigma action */
+    OptionAction                _colorByAction;                 /** Color by options action */
+    ColorMapAction              _colorMapAction;                /** Color map action */
+    IntegralAction              _randomSeedAction;              /** Random seed action */
     TriggerAction               _computeAction;                 /** Compute action */
     bool                        _computationUpToDate;           /** Whether computation results are up-to-date */
 };

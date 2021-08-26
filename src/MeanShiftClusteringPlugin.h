@@ -7,13 +7,16 @@
 #include "graphics/OffscreenBuffer.h"
 #include "actions/Actions.h"
 
+#include <QRandomGenerator>
+
 using namespace hdps::plugin;
 
 class PointsPlugin;
 
 class MeanShiftClusteringPlugin : public QObject, public AnalysisPlugin
 {
-    Q_OBJECT   
+    Q_OBJECT
+
 public:
     MeanShiftClusteringPlugin(const PluginFactory* factory);
 
@@ -26,9 +29,10 @@ public:
     };
 
 private:
-    OffscreenBuffer     _offscreenBuffer;
-    hdps::MeanShift     _meanShift;
-    SettingsAction      _settingsAction;
+    OffscreenBuffer     _offscreenBuffer;       /** Off-screen buffer */
+    hdps::MeanShift     _meanShift;             /** Mean-shift analysis */
+    SettingsAction      _settingsAction;        /** Settings action */
+    QRandomGenerator    _rng;                   /** Random number generator */
 };
 
 class MeanShiftClusteringPluginFactory : public AnalysisPluginFactory
