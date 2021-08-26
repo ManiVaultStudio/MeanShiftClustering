@@ -16,6 +16,8 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
 {
     setText("Mean-shift");
 
+    _randomSeedAction.setUpdateDuringDrag(false);
+
     const auto updateReadOnly = [this]() -> void {
         const auto enabled  = !isReadOnly();
         const auto colorBy  = static_cast<ColorBy>(_colorByAction.getCurrentIndex());
