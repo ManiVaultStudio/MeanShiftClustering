@@ -11,12 +11,13 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _colorByAction(this, "Color by", QStringList({"Pseudo-random colors", "Color map"}), "Pseudo-random colors", "Pseudo-random colors"),
     _colorMapAction(this, "Color map"),
     _randomSeedAction(this, "Random seed"),
-    _computeAction(this, "Compute"),
-    _computationUpToDate(false)
+    _computeAction(this, "Compute")
 {
     setText("Mean-shift");
 
+    _sigmaAction.setUpdateDuringDrag(false);
     _randomSeedAction.setUpdateDuringDrag(false);
+    _computeAction.setVisible(false);
 
     const auto updateReadOnly = [this]() -> void {
         const auto enabled  = !isReadOnly();
@@ -26,20 +27,20 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
         _randomSeedAction.setEnabled(enabled && colorBy == ColorBy::PsuedoRandomColors);
     };
 
-    const auto update = [this]() -> void {
+    const auto compute = [this]() -> void {
         _meanShiftAnalysisPlugin->getMeanShift().setSigma(_sigmaAction.getValue());
+        _computeAction.trigger();
     };
 
-    connect(&_sigmaAction, &DecimalAction::valueChanged, this, [this, update](const double& value) {
-        setComputationUpToDate(false);
-        update();
+    connect(&_sigmaAction, &DecimalAction::valueChanged, this, [this, compute](const double& value) {
+        
+        compute();
     });
 
     connect(&_colorByAction, &OptionAction::currentIndexChanged, this, [this, updateReadOnly](const std::int32_t& currentIndex) {
         updateReadOnly();
     });
 
-    update();
     updateReadOnly();
 }
 
@@ -50,16 +51,4 @@ QMenu* SettingsAction::getContextMenu(QWidget* parent /*= nullptr*/)
     menu->addAction(&_computeAction);
 
     return menu;
-}
-
-bool SettingsAction::isComputationUpToDate() const
-{
-    return _computationUpToDate;
-}
-
-void SettingsAction::setComputationUpToDate(const bool& computationUpToDate)
-{
-    _computationUpToDate = computationUpToDate;
-
-    _computeAction.setEnabled(!_computationUpToDate);
 }

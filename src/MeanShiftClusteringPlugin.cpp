@@ -152,7 +152,6 @@ void MeanShiftClusteringPlugin::init()
 
         setTaskFinished();
 
-        _settingsAction.setComputationUpToDate(true);
         _settingsAction.setEnabled(true);
     });
 
@@ -171,6 +170,9 @@ void MeanShiftClusteringPlugin::init()
     _offscreenBuffer.bindContext();
     _meanShift.init();
     _offscreenBuffer.releaseContext();
+
+    // Do an initial computation
+    _settingsAction.getComputeAction().trigger();
 }
 
 AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()

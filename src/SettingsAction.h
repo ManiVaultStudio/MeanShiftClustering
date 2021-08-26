@@ -38,15 +38,6 @@ public:
      */
     QMenu* getContextMenu(QWidget* parent = nullptr) override;
 
-    /** Get whether the settings are dirty */
-    bool isComputationUpToDate() const;
-
-    /**
-     * Set whether computation results are up-to-date
-     * @param computationUpToDate Whether computation results are up-to-date
-     */
-    void setComputationUpToDate(const bool& computationUpToDate);
-
 public: // Action getters
 
     DecimalAction& getSigmaAction() { return _sigmaAction; }
@@ -62,5 +53,4 @@ protected:
     ColorMapAction              _colorMapAction;                /** Color map action */
     IntegralAction              _randomSeedAction;              /** Random seed action */
     TriggerAction               _computeAction;                 /** Compute action */
-    bool                        _computationUpToDate;           /** Whether computation results are up-to-date */
 };
