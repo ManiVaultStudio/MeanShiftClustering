@@ -117,8 +117,8 @@ void MeanShiftClusteringPlugin::init()
         {
             Cluster cluster;
 
-            cluster._name   = QString("cluster %1").arg(QString::number(clusterIndex + 1));
-            cluster.indices = c;
+            cluster._name       = QString("cluster %1").arg(QString::number(clusterIndex + 1));
+            cluster._indices    = c;
 
             const auto randomHue        = randomGenerator.bounded(360);
             const auto randomSaturation = randomGenerator.bounded(150, 255);
