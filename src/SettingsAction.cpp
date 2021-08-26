@@ -27,16 +27,6 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
         _randomSeedAction.setEnabled(enabled && colorBy == ColorBy::PsuedoRandomColors);
     };
 
-    const auto compute = [this]() -> void {
-        _meanShiftAnalysisPlugin->getMeanShift().setSigma(_sigmaAction.getValue());
-        _computeAction.trigger();
-    };
-
-    connect(&_sigmaAction, &DecimalAction::valueChanged, this, [this, compute](const double& value) {
-        
-        compute();
-    });
-
     connect(&_colorByAction, &OptionAction::currentIndexChanged, this, [this, updateReadOnly](const std::int32_t& currentIndex) {
         updateReadOnly();
     });

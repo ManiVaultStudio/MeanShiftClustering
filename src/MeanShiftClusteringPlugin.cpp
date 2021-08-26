@@ -87,12 +87,18 @@ void MeanShiftClusteringPlugin::init()
 
     connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, &inputDataset, &outputDataset, updateColors]() {
 
+        // Update the sigma value
+        _meanShift.setSigma(_settingsAction.getSigmaAction().getValue());
+
         // Disable the settings when computing
         _settingsAction.setEnabled(false);
 
+        setTaskRunning();
         setTaskName("Mean-shift clustering");
         setTaskProgress(0.0f);
         setTaskDescription("Initializing");
+
+        QCoreApplication::processEvents();
 
         // Data sanity check
         if (inputDataset.getNumDimensions() != 2)
@@ -107,14 +113,12 @@ void MeanShiftClusteringPlugin::init()
             return;
         }
 
-        setTaskDescription("Extracting data");
-
         std::vector<hdps::Vector2f> data;
         inputDataset.extractDataForDimensions(data, 0, 1);
 
-        setTaskProgress(0.1f);
-
         setTaskDescription("Clustering");
+
+        QCoreApplication::processEvents();
 
         _meanShift.setData(&data);
 
@@ -122,11 +126,15 @@ void MeanShiftClusteringPlugin::init()
 
         setTaskProgress(0.2f);
 
+        QCoreApplication::processEvents();
+
         _offscreenBuffer.bindContext();
         _meanShift.cluster(data, clusters);
         _offscreenBuffer.releaseContext();
 
         setTaskProgress(0.7f);
+
+        QCoreApplication::processEvents();
 
         // Remove existing clusters
         outputDataset.getClusters().clear();
@@ -153,6 +161,10 @@ void MeanShiftClusteringPlugin::init()
         setTaskFinished();
 
         _settingsAction.setEnabled(true);
+    });
+
+    connect(&_settingsAction.getSigmaAction(), &DecimalAction::valueChanged, this, [this](const double& value) {
+        _settingsAction.getComputeAction().trigger();
     });
 
     connect(&_settingsAction.getColorByAction(), &OptionAction::currentIndexChanged, this, [this, updateColors](const std::int32_t& currentIndex) {

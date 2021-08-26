@@ -24,10 +24,6 @@ public:
     
     void init() override;
 
-    hdps::MeanShift& getMeanShift() {
-        return _meanShift;
-    };
-
 private:
     OffscreenBuffer     _offscreenBuffer;       /** Off-screen buffer */
     hdps::MeanShift     _meanShift;             /** Mean-shift analysis */
