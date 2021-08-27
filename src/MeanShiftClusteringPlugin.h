@@ -28,7 +28,7 @@ private:
     OffscreenBuffer     _offscreenBuffer;       /** Off-screen buffer */
     hdps::MeanShift     _meanShift;             /** Mean-shift analysis */
     SettingsAction      _settingsAction;        /** Settings action */
-    QRandomGenerator    _rng;                   /** Random number generator */
+    QRandomGenerator    _rng;                   /** Random number generator for random colors */
 };
 
 class MeanShiftClusteringPluginFactory : public AnalysisPluginFactory
