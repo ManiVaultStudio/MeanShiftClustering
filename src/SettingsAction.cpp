@@ -7,7 +7,7 @@ using namespace hdps::gui;
 SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlugin) :
     GroupAction(meanShiftClusteringPlugin, true),
     _meanShiftAnalysisPlugin(meanShiftClusteringPlugin),
-    _sigmaAction(this, "Sigma", 0.001, 1.0, 0.15, 0.15, 2),
+    _sigmaAction(this, "Sigma", 0.01, 1.0, 0.15, 0.15, 2),
     _colorByAction(this, "Color by", QStringList({"Pseudo-random colors", "Color map"}), "Pseudo-random colors", "Pseudo-random colors"),
     _colorMapAction(this, "Color map"),
     _randomSeedAction(this, "Random seed"),
