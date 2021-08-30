@@ -11,6 +11,8 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _colorByAction(this, "Color by", QStringList({"Pseudo-random colors", "Color map"}), "Pseudo-random colors", "Pseudo-random colors"),
     _colorMapAction(this, "Color map"),
     _randomSeedAction(this, "Random seed"),
+    _updateColorsManuallyAction(this, "Update colors manually", false, false),
+    _applyColorsAction(this, "Apply colors"),
     _computeAction(this, "Compute")
 {
     setText("Mean-shift");
@@ -25,9 +27,14 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
 
         _colorMapAction.setEnabled(enabled && colorBy == ColorBy::ColorMap);
         _randomSeedAction.setEnabled(enabled && colorBy == ColorBy::PsuedoRandomColors);
+        _applyColorsAction.setEnabled(enabled && _updateColorsManuallyAction.isChecked());
     };
 
     connect(&_colorByAction, &OptionAction::currentIndexChanged, this, [this, updateReadOnly](const std::int32_t& currentIndex) {
+        updateReadOnly();
+    });
+
+    connect(&_updateColorsManuallyAction, &ToggleAction::toggled, this, [this, updateReadOnly](bool toggled) {
         updateReadOnly();
     });
 

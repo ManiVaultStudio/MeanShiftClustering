@@ -65,13 +65,16 @@ void MeanShiftClusteringPlugin::init()
         switch (colorBy) {
             case SettingsAction::ColorBy::PsuedoRandomColors:
             {
+                // Seed the random number generator
                 _rng.seed(_settingsAction.getRandomSeedAction().getValue());
 
+                // Generate pseudo-random cluster colors
                 for (auto& cluster : outputDataset.getClusters()) {
                     const auto randomHue        = _rng.bounded(360);
                     const auto randomSaturation = _rng.bounded(150, 255);
                     const auto randomLightness  = _rng.bounded(50, 200);
 
+                    // Create random color from hue, saturation and lightness
                     cluster._color = QColor::fromHsl(randomHue, randomSaturation, randomLightness);
                 }
 
@@ -80,6 +83,20 @@ void MeanShiftClusteringPlugin::init()
 
             case SettingsAction::ColorBy::ColorMap:
             {
+                // Get output clusters
+                auto& clusters = outputDataset.getClusters();
+
+                // Get scaled version of the color map image that matches the width to the number of clusters
+                const auto& colorMapImage = _settingsAction.getColorMapAction().getColorMapImage().scaled(clusters.size(), 4);
+
+                auto clusterIndex = 0;
+
+                // Color clusters according to the color map image
+                for (auto& cluster : clusters) {
+                    cluster._color = colorMapImage.pixel(clusterIndex, 0);
+                    clusterIndex++;
+                }
+
                 break;
             }
         }
@@ -168,12 +185,33 @@ void MeanShiftClusteringPlugin::init()
     });
 
     connect(&_settingsAction.getColorByAction(), &OptionAction::currentIndexChanged, this, [this, updateColors](const std::int32_t& currentIndex) {
+        if (_settingsAction.getUpdateColorsManuallyAction().isChecked())
+            return;
+
+        updateColors();
+
+        _core->notifyDataChanged(getOutputDatasetName());
+    });
+
+    connect(&_settingsAction.getColorMapAction(), &ColorMapAction::imageChanged, this, [this, updateColors](const QImage& image) {
+        if (_settingsAction.getUpdateColorsManuallyAction().isChecked())
+            return;
+
         updateColors();
 
         _core->notifyDataChanged(getOutputDatasetName());
     });
 
     connect(&_settingsAction.getRandomSeedAction(), &IntegralAction::valueChanged, this, [this, updateColors](const std::int32_t& value) {
+        if (_settingsAction.getUpdateColorsManuallyAction().isChecked())
+            return;
+
+        updateColors();
+
+        _core->notifyDataChanged(getOutputDatasetName());
+    });
+
+    connect(&_settingsAction.getApplyColorsAction(), &TriggerAction::triggered, this, [this, updateColors](const std::int32_t& value) {
         updateColors();
 
         _core->notifyDataChanged(getOutputDatasetName());

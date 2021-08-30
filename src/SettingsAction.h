@@ -44,6 +44,8 @@ public: // Action getters
     OptionAction& getColorByAction() { return _colorByAction; }
     ColorMapAction& getColorMapAction() { return _colorMapAction; }
     IntegralAction& getRandomSeedAction() { return _randomSeedAction; }
+    ToggleAction& getUpdateColorsManuallyAction() { return _updateColorsManuallyAction; }
+    TriggerAction& getApplyColorsAction() { return _applyColorsAction; }
     TriggerAction& getComputeAction() { return _computeAction; }
 
 protected:
@@ -52,5 +54,7 @@ protected:
     OptionAction                _colorByAction;                 /** Color by options action */
     ColorMapAction              _colorMapAction;                /** Color map action */
     IntegralAction              _randomSeedAction;              /** Random seed action */
+    ToggleAction                _updateColorsManuallyAction;    /** Update colors manually action */
+    TriggerAction               _applyColorsAction;             /** Apply colors action */
     TriggerAction               _computeAction;                 /** Compute action */
 };
