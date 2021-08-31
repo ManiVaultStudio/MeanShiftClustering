@@ -63,7 +63,7 @@ void MeanShiftClusteringPlugin::init()
         const auto colorBy = static_cast<SettingsAction::ColorBy>(_settingsAction.getColorByAction().getCurrentIndex());
 
         switch (colorBy) {
-            case SettingsAction::ColorBy::PsuedoRandomColors:
+            case SettingsAction::ColorBy::PseudoRandomColors:
             {
                 // Seed the random number generator
                 _rng.seed(_settingsAction.getRandomSeedAction().getValue());
@@ -75,7 +75,7 @@ void MeanShiftClusteringPlugin::init()
                     const auto randomLightness  = _rng.bounded(50, 200);
 
                     // Create random color from hue, saturation and lightness
-                    cluster._color = QColor::fromHsl(randomHue, randomSaturation, randomLightness);
+                    cluster.setColor(QColor::fromHsl(randomHue, randomSaturation, randomLightness));
                 }
 
                 break;
@@ -87,13 +87,13 @@ void MeanShiftClusteringPlugin::init()
                 auto& clusters = outputDataset.getClusters();
 
                 // Get scaled version of the color map image that matches the width to the number of clusters
-                const auto& colorMapImage = _settingsAction.getColorMapAction().getColorMapImage().scaled(clusters.size(), 4);
+                const auto& colorMapImage = _settingsAction.getColorMapAction().getColorMapImage().scaled(static_cast<std::int32_t>(clusters.size()), 4);
 
                 auto clusterIndex = 0;
 
                 // Color clusters according to the color map image
                 for (auto& cluster : clusters) {
-                    cluster._color = colorMapImage.pixel(clusterIndex, 0);
+                    cluster.setColor(colorMapImage.pixel(clusterIndex, 0));
                     clusterIndex++;
                 }
 
@@ -163,8 +163,8 @@ void MeanShiftClusteringPlugin::init()
         {
             Cluster cluster;
 
-            cluster._name       = QString("cluster %1").arg(QString::number(clusterIndex + 1));
-            cluster._indices    = c;
+            cluster.setName(QString("cluster %1").arg(QString::number(clusterIndex + 1)));
+            cluster.setIndices(c);
 
             outputDataset.addCluster(cluster);
 

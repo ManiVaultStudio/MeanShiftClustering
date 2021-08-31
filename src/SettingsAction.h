@@ -20,7 +20,7 @@ public:
 
     /** Color options */
     enum class ColorBy {
-        PsuedoRandomColors,     /** Use pseudo-random colors */
+        PseudoRandomColors,     /** Use pseudo-random colors */
         ColorMap                /** Color by continuous color map */
     };
 
@@ -30,13 +30,6 @@ public:
      * @param meanShiftClusteringPlugin Pointer to mean-shift clustering plugin
      */
     SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlugin);
-
-    /**
-     * Get the context menu for the action
-     * @param parent Parent widget
-     * @return Context menu
-     */
-    QMenu* getContextMenu(QWidget* parent = nullptr) override;
 
 public: // Action getters
 

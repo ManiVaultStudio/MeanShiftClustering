@@ -26,7 +26,7 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
         const auto colorBy  = static_cast<ColorBy>(_colorByAction.getCurrentIndex());
 
         _colorMapAction.setEnabled(enabled && colorBy == ColorBy::ColorMap);
-        _randomSeedAction.setEnabled(enabled && colorBy == ColorBy::PsuedoRandomColors);
+        _randomSeedAction.setEnabled(enabled && colorBy == ColorBy::PseudoRandomColors);
         _applyColorsAction.setEnabled(enabled && _updateColorsManuallyAction.isChecked());
     };
 
@@ -39,13 +39,4 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     });
 
     updateReadOnly();
-}
-
-QMenu* SettingsAction::getContextMenu(QWidget* parent /*= nullptr*/)
-{
-    auto menu = new QMenu(text(), parent);
-
-    menu->addAction(&_computeAction);
-
-    return menu;
 }
