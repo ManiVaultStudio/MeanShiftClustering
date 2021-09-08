@@ -21,6 +21,9 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _randomSeedAction.setUpdateDuringDrag(false);
     _computeAction.setVisible(false);
 
+    _colorMapAction.getSettingsAction().getRangeMinAction().setEnabled(false);
+    _colorMapAction.getSettingsAction().getRangeMaxAction().setEnabled(false);
+
     const auto updateReadOnly = [this]() -> void {
         const auto enabled  = !isReadOnly();
         const auto colorBy  = static_cast<ColorBy>(_colorByAction.getCurrentIndex());
