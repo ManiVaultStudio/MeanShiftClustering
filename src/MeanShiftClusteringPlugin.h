@@ -42,6 +42,9 @@ public:
     MeanShiftClusteringPluginFactory(void) {}
     ~MeanShiftClusteringPluginFactory(void) override {}
     
+    /** Returns the plugin icon */
+    QIcon getIcon() const override;
+
     AnalysisPlugin* produce() override;
 
     hdps::DataTypes supportedDataTypes() const override;

@@ -225,6 +225,11 @@ void MeanShiftClusteringPlugin::init()
     _settingsAction.getComputeAction().trigger();
 }
 
+QIcon MeanShiftClusteringPluginFactory::getIcon() const
+{
+    return Application::getIconFont("FontAwesome").getIcon("th-large");
+}
+
 AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()
 {
     return new MeanShiftClusteringPlugin(this);
