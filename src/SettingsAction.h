@@ -33,6 +33,8 @@ public:
 
 public: // Action getters
 
+    OptionAction& getDimensionOneAction() { return _dimensionOneAction; }
+    OptionAction& getDimensionTwoAction() { return _dimensionTwoAction; }
     DecimalAction& getSigmaAction() { return _sigmaAction; }
     OptionAction& getColorByAction() { return _colorByAction; }
     ColorMapAction& getColorMapAction() { return _colorMapAction; }
@@ -43,6 +45,8 @@ public: // Action getters
 
 protected:
     MeanShiftClusteringPlugin*  _meanShiftAnalysisPlugin;       /** Pointer to mean-shift clustering plugin */
+    OptionAction                _dimensionOneAction;            /** First dimension action */
+    OptionAction                _dimensionTwoAction;            /** Second dimension action */
     DecimalAction               _sigmaAction;                   /** Sigma action */
     OptionAction                _colorByAction;                 /** Color by options action */
     ColorMapAction              _colorMapAction;                /** Color map action */

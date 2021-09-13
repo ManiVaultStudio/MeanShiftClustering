@@ -24,6 +24,9 @@ public:
     
     void init() override;
 
+    /** Establishes whether a computation can be executed */
+    bool canCompute() const;
+
 private:
     OffscreenBuffer     _offscreenBuffer;       /** Off-screen buffer */
     hdps::MeanShift     _meanShift;             /** Mean-shift analysis */

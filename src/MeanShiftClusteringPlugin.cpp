@@ -50,16 +50,42 @@ void MeanShiftClusteringPlugin::init()
     // Inject the setting action into the output dataset
     outputDataset.addAction(_settingsAction);
 
-    /*
-    connect(&_meanShift, &MeanShift::progressSection, this, [this](const QString& section) {
-        setTaskDescription(section);
-    });
+    QStringList dimensionNames;
 
-    connect(&_meanShift, &MeanShift::progressPercentage, this, [this](const float& percentage) {
-        setTaskProgress(percentage);
-    });
-    */
+    for (auto dimensionName : inputDataset.getDimensionNames())
+        dimensionNames << dimensionName;
 
+    _settingsAction.getDimensionOneAction().setOptions(dimensionNames);
+    _settingsAction.getDimensionTwoAction().setOptions(dimensionNames);
+
+    const auto numberOfDimensions = dimensionNames.count();
+
+    // Establish whether dimension can/should be picked
+    const auto canPickDimensions = numberOfDimensions > 2;
+
+    _settingsAction.getDimensionOneAction().setEnabled(canPickDimensions);
+    _settingsAction.getDimensionTwoAction().setEnabled(canPickDimensions);
+
+    // Handle dataset with only one dimension
+    if (numberOfDimensions == 1) {
+        _settingsAction.getDimensionOneAction().setCurrentIndex(0);
+        _settingsAction.getDimensionTwoAction().setCurrentIndex(0);
+
+        QMessageBox warning;
+
+        warning.setText("Selected data must have at least two dimensions");
+        warning.exec();
+
+        _settingsAction.setEnabled(false);
+    }
+
+    // Handle dataset with two or more dimensions
+    if (numberOfDimensions >= 2) {
+        _settingsAction.getDimensionOneAction().setCurrentIndex(0);
+        _settingsAction.getDimensionTwoAction().setCurrentIndex(1);
+    }
+
+    // Updates the cluster colors depending on the color configuration
     const auto updateColors = [this, &outputDataset]() -> void {
         const auto colorBy = static_cast<SettingsAction::ColorBy>(_settingsAction.getColorByAction().getCurrentIndex());
 
@@ -105,6 +131,10 @@ void MeanShiftClusteringPlugin::init()
 
     connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, &inputDataset, &outputDataset, updateColors]() {
 
+        // Do not run if the selected dimensions are the same
+        if (_settingsAction.getDimensionOneAction().getCurrentIndex() == _settingsAction.getDimensionTwoAction().getCurrentIndex())
+            return;
+
         // Update the sigma value
         _meanShift.setSigma(_settingsAction.getSigmaAction().getValue());
 
@@ -117,19 +147,6 @@ void MeanShiftClusteringPlugin::init()
         setTaskDescription("Initializing");
 
         QCoreApplication::processEvents();
-
-        // Data sanity check
-        if (inputDataset.getNumDimensions() != 2)
-        {
-            QMessageBox warning;
-            warning.setText("Selected data must be 2-dimensional.");
-            warning.exec();
-
-            setTaskAborted();
-
-            _settingsAction.setEnabled(true);
-            return;
-        }
 
         std::vector<hdps::Vector2f> data;
         inputDataset.extractDataForDimensions(data, 0, 1);
@@ -181,6 +198,14 @@ void MeanShiftClusteringPlugin::init()
         _settingsAction.setEnabled(true);
     });
 
+    connect(&_settingsAction.getDimensionOneAction(), &OptionAction::currentIndexChanged, this, [this](const std::int32_t& currentIndex) {
+        _settingsAction.getComputeAction().trigger();
+    });
+    
+    connect(&_settingsAction.getDimensionTwoAction(), &OptionAction::currentIndexChanged, this, [this](const std::int32_t& currentIndex) {
+        _settingsAction.getComputeAction().trigger();
+    });
+
     connect(&_settingsAction.getSigmaAction(), &DecimalAction::valueChanged, this, [this](const double& value) {
         _settingsAction.getComputeAction().trigger();
     });
@@ -224,6 +249,14 @@ void MeanShiftClusteringPlugin::init()
 
     // Do an initial computation
     _settingsAction.getComputeAction().trigger();
+}
+
+bool MeanShiftClusteringPlugin::canCompute() const
+{
+    if (!_input.isValid())
+        return false;
+
+    return true;
 }
 
 QIcon MeanShiftClusteringPluginFactory::getIcon() const
