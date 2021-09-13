@@ -38,7 +38,7 @@ class MeanShiftClusteringPluginFactory : public AnalysisPluginFactory
 {
     Q_INTERFACES(hdps::plugin::AnalysisPluginFactory hdps::plugin::PluginFactory)
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID   "nl.tudelft.MeanShiftClusteringPlugin"
+    Q_PLUGIN_METADATA(IID   "nl.BioVault.MeanShiftClusteringPlugin"
                       FILE  "MeanShiftClusteringPlugin.json")
     
 public:

@@ -18,7 +18,7 @@
 
 #define NO_FILE 0
 
-Q_PLUGIN_METADATA(IID "nl.tudelft.MeanShift")
+Q_PLUGIN_METADATA(IID "nl.BioVault.MeanShift")
 
 using namespace hdps;
 using namespace hdps::gui;
