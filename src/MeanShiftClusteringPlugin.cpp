@@ -50,15 +50,22 @@ void MeanShiftClusteringPlugin::init()
     // Inject the setting action into the output dataset
     outputDataset.addAction(_settingsAction);
 
-    QStringList dimensionNames;
+    // Get the number of dimensions in the input dataset
+    const auto numberOfDimensions = inputDataset.getNumDimensions();
 
-    for (auto dimensionName : inputDataset.getDimensionNames())
-        dimensionNames << dimensionName;
+    QStringList dimensionNames;
+    
+    if (numberOfDimensions == inputDataset.getDimensionNames().size()) {
+        for (auto dimensionName : inputDataset.getDimensionNames())
+            dimensionNames << dimensionName;
+    }
+    else {
+        for (int dimensionIndex = 0; dimensionIndex < numberOfDimensions; dimensionIndex++)
+            dimensionNames << QString("Dim %1").arg(QString::number(dimensionIndex));
+    }
 
     _settingsAction.getDimensionOneAction().setOptions(dimensionNames);
     _settingsAction.getDimensionTwoAction().setOptions(dimensionNames);
-
-    const auto numberOfDimensions = dimensionNames.count();
 
     // Establish whether dimension can/should be picked
     const auto canPickDimensions = numberOfDimensions > 2;
