@@ -44,7 +44,7 @@ class MeanShiftClusteringPluginFactory : public AnalysisPluginFactory
 public:
     MeanShiftClusteringPluginFactory(void) {}
     ~MeanShiftClusteringPluginFactory(void) override {}
-    
+
     /** Returns the plugin icon */
     QIcon getIcon() const override;
 
