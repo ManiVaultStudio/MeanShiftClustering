@@ -76,7 +76,9 @@ void MeanShiftClusteringPlugin::init()
     // Handle dataset with only one dimension
     if (numberOfDimensions == 1) {
         _settingsAction.getDimensionOneAction().setCurrentIndex(0);
+        _settingsAction.getDimensionOneAction().setDefaultIndex(0);
         _settingsAction.getDimensionTwoAction().setCurrentIndex(0);
+        _settingsAction.getDimensionTwoAction().setDefaultIndex(0);
 
         QMessageBox warning;
 
@@ -89,7 +91,9 @@ void MeanShiftClusteringPlugin::init()
     // Handle dataset with two or more dimensions
     if (numberOfDimensions >= 2) {
         _settingsAction.getDimensionOneAction().setCurrentIndex(0);
+        _settingsAction.getDimensionOneAction().setDefaultIndex(0);
         _settingsAction.getDimensionTwoAction().setCurrentIndex(1);
+        _settingsAction.getDimensionTwoAction().setDefaultIndex(1);
     }
 
     // Updates the cluster colors depending on the color configuration
