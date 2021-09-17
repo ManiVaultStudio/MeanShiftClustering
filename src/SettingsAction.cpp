@@ -23,7 +23,7 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _dimensionTwoAction.setWidgetFlags(OptionAction::All);
     _sigmaAction.setWidgetFlags(IntegralAction::All);
     _colorByAction.setWidgetFlags(OptionAction::All);
-    _colorMapAction.setWidgetFlags(ColorMapAction::All);
+    _colorMapAction.setWidgetFlags(ColorMapAction::Settings | ColorMapAction::ResetButton);
     _randomSeedAction.setWidgetFlags(IntegralAction::SpinBoxAndReset);
     _updateColorsManuallyAction.setWidgetFlags(ToggleAction::CheckBoxAndReset);
 
