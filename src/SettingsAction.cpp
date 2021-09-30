@@ -19,13 +19,15 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
 {
     setText("Mean-shift");
 
-    _dimensionOneAction.setWidgetFlags(OptionAction::All);
-    _dimensionTwoAction.setWidgetFlags(OptionAction::All);
-    _sigmaAction.setWidgetFlags(IntegralAction::All);
-    _colorByAction.setWidgetFlags(OptionAction::All);
-    _colorMapAction.setWidgetFlags(ColorMapAction::Settings | ColorMapAction::ResetPushButton);
-    _randomSeedAction.setWidgetFlags(IntegralAction::SpinBoxAndReset);
-    _updateColorsManuallyAction.setWidgetFlags(ToggleAction::CheckBoxAndResetPushButton);
+    /*
+    _dimensionOneAction.setDefaultWidgetFlags(OptionAction::All);
+    _dimensionTwoAction.setDefaultWidgetFlags(OptionAction::All);
+    _sigmaAction.setDefaultWidgetFlags(IntegralAction::All);
+    _colorByAction.setDefaultWidgetFlags(OptionAction::All);
+    _colorMapAction.setDefaultWidgetFlags(ColorMapAction::Settings | ColorMapAction::ResetPushButton);
+    _randomSeedAction.setDefaultWidgetFlags(IntegralAction::SpinBoxAndReset);
+    _updateColorsManuallyAction.setDefaultWidgetFlags(ToggleAction::CheckBoxAndResetPushButton);
+    */
 
     _sigmaAction.setUpdateDuringDrag(false);
     _randomSeedAction.setUpdateDuringDrag(false);
