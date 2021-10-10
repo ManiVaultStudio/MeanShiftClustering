@@ -60,7 +60,7 @@ void MeanShiftClusteringPlugin::init()
             dimensionNames << dimensionName;
     }
     else {
-        for (int dimensionIndex = 0; dimensionIndex < numberOfDimensions; dimensionIndex++)
+        for (std::uint32_t dimensionIndex = 0; dimensionIndex < numberOfDimensions; dimensionIndex++)
             dimensionNames << QString("Dim %1").arg(QString::number(dimensionIndex));
     }
 
