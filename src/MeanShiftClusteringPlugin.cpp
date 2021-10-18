@@ -60,7 +60,7 @@ void MeanShiftClusteringPlugin::init()
             dimensionNames << dimensionName;
     }
     else {
-        for (int dimensionIndex = 0; dimensionIndex < numberOfDimensions; dimensionIndex++)
+        for (std::uint32_t dimensionIndex = 0; dimensionIndex < numberOfDimensions; dimensionIndex++)
             dimensionNames << QString("Dim %1").arg(QString::number(dimensionIndex));
     }
 
@@ -143,8 +143,10 @@ void MeanShiftClusteringPlugin::init()
     connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, &inputDataset, &outputDataset, updateColors]() {
 
         // Do not run if the selected dimensions are the same
-        if (_settingsAction.getDimensionOneAction().getCurrentIndex() == _settingsAction.getDimensionTwoAction().getCurrentIndex())
+        if (_settingsAction.getDimensionOneAction().getCurrentIndex() == _settingsAction.getDimensionTwoAction().getCurrentIndex()) {
+            setTaskDescription("Input error: identical dimensions");
             return;
+        }
 
         // Update the sigma value
         _meanShift.setSigma(_settingsAction.getSigmaAction().getValue());
@@ -160,7 +162,7 @@ void MeanShiftClusteringPlugin::init()
         QCoreApplication::processEvents();
 
         std::vector<hdps::Vector2f> data;
-        inputDataset.extractDataForDimensions(data, 0, 1);
+        inputDataset.extractDataForDimensions(data, _settingsAction.getDimensionOneAction().getCurrentIndex(), _settingsAction.getDimensionTwoAction().getCurrentIndex());
 
         setTaskDescription("Clustering");
 
@@ -209,11 +211,11 @@ void MeanShiftClusteringPlugin::init()
         _settingsAction.setEnabled(true);
     });
 
-    connect(&_settingsAction.getDimensionOneAction(), &OptionAction::currentIndexChanged, this, [this](const std::int32_t& currentIndex) {
+    connect(&_settingsAction.getDimensionOneAction(), &OptionAction::currentIndexChanged, this, [this, dimensionNames](const std::int32_t& currentIndex) mutable -> void {
         _settingsAction.getComputeAction().trigger();
     });
     
-    connect(&_settingsAction.getDimensionTwoAction(), &OptionAction::currentIndexChanged, this, [this](const std::int32_t& currentIndex) {
+    connect(&_settingsAction.getDimensionTwoAction(), &OptionAction::currentIndexChanged, this, [this, dimensionNames](const std::int32_t& currentIndex) mutable -> void {
         _settingsAction.getComputeAction().trigger();
     });
 
@@ -235,8 +237,6 @@ void MeanShiftClusteringPlugin::init()
             return;
 
         updateColors();
-
-        _core->notifyDataChanged(getOutputDatasetName());
     });
 
     connect(&_settingsAction.getRandomSeedAction(), &IntegralAction::valueChanged, this, [this, updateColors](const std::int32_t& value) {
