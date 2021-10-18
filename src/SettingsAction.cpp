@@ -9,7 +9,7 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _meanShiftAnalysisPlugin(meanShiftClusteringPlugin),
     _dimensionOneAction(this, "Dimension 1"),
     _dimensionTwoAction(this, "Dimension 2"),
-    _sigmaAction(this, "Sigma", 0.01f, 1.0f, 0.15f, 0.15f, 2.0f),
+    _sigmaAction(this, "Sigma", 0.005f, 0.5f, 0.05f, 0.05f, 3),
     _colorByAction(this, "Color by", QStringList({"Pseudo-random colors", "Color map"}), "Pseudo-random colors", "Pseudo-random colors"),
     _colorMapAction(this, "Color map"),
     _randomSeedAction(this, "Random seed"),
