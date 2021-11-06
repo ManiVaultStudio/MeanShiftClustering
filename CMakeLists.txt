@@ -22,8 +22,8 @@ set(SOURCES
     src/MeanShiftClusteringPlugin.h
     src/MeanShiftClusteringPlugin.cpp
     src/MeanShiftClusteringPlugin.json
-    src/MeanShiftSettingsWidget.h
-    src/MeanShiftSettingsWidget.cpp
+	src/SettingsAction.h
+    src/SettingsAction.cpp
 )
 
 source_group( Plugin FILES ${SOURCES})

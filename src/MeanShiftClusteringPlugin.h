@@ -1,63 +1,54 @@
 #pragma once
 
 #include "AnalysisPlugin.h"
-
-#include "MeanShiftSettingsWidget.h"
+#include "SettingsAction.h"
 
 #include "util/MeanShift.h"
 #include "graphics/OffscreenBuffer.h"
+#include "actions/Actions.h"
 
-// =============================================================================
-// View
-// =============================================================================
+#include <QRandomGenerator>
 
 using namespace hdps::plugin;
 
 class PointsPlugin;
 
-class MeanShiftAnalysisPlugin : public QObject, public AnalysisPlugin
+class MeanShiftClusteringPlugin : public QObject, public AnalysisPlugin
 {
-    Q_OBJECT   
+    Q_OBJECT
+
 public:
-    MeanShiftAnalysisPlugin() :
-        AnalysisPlugin("Mean Shift Analysis")
-    {
+    MeanShiftClusteringPlugin(const PluginFactory* factory);
 
-    }
-
-    ~MeanShiftAnalysisPlugin(void) override;
+    ~MeanShiftClusteringPlugin() override;
     
     void init() override;
 
-    void onDataEvent(hdps::DataEvent* dataEvent);
-
-    SettingsWidget* const getSettings() override;
-public slots:
-    void dataSetPicked(const QString& name);
-
-    void startComputation();
+    /** Establishes whether a computation can be executed */
+    bool canCompute() const;
 
 private:
-    OffscreenBuffer offscreen;
-    hdps::MeanShift _meanShift;
-
-    MeanShiftSettingsWidget _settings;
+    OffscreenBuffer     _offscreenBuffer;       /** Off-screen buffer */
+    hdps::MeanShift     _meanShift;             /** Mean-shift analysis */
+    SettingsAction      _settingsAction;        /** Settings action */
+    QRandomGenerator    _rng;                   /** Random number generator for pseudo-random colors */
 };
 
-// =============================================================================
-// Factory
-// =============================================================================
-
-class MeanShiftAnalysisPluginFactory : public AnalysisPluginFactory
+class MeanShiftClusteringPluginFactory : public AnalysisPluginFactory
 {
     Q_INTERFACES(hdps::plugin::AnalysisPluginFactory hdps::plugin::PluginFactory)
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID   "nl.tudelft.MeanShiftAnalysisPlugin"
+    Q_PLUGIN_METADATA(IID   "nl.BioVault.MeanShiftClusteringPlugin"
                       FILE  "MeanShiftClusteringPlugin.json")
     
 public:
-    MeanShiftAnalysisPluginFactory(void) {}
-    ~MeanShiftAnalysisPluginFactory(void) override {}
-    
+    MeanShiftClusteringPluginFactory(void) {}
+    ~MeanShiftClusteringPluginFactory(void) override {}
+
+    /** Returns the plugin icon */
+    QIcon getIcon() const override;
+
     AnalysisPlugin* produce() override;
+
+    hdps::DataTypes supportedDataTypes() const override;
 };
