@@ -237,6 +237,8 @@ void MeanShiftClusteringPlugin::init()
             return;
 
         updateColors();
+
+        _core->notifyDataChanged(getOutputDatasetName());
     });
 
     connect(&_settingsAction.getRandomSeedAction(), &IntegralAction::valueChanged, this, [this, updateColors](const std::int32_t& value) {
