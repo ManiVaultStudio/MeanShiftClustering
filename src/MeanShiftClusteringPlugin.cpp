@@ -41,8 +41,6 @@ void MeanShiftClusteringPlugin::init()
     // Create clusters output dataset
     setOutputDatasetName(_core->addData("Cluster", "Clusters", getInputDatasetName()));
 
-    _core->notifyDataAdded(getOutputDatasetName());
-
     // Get input and output datasets
     auto& inputDataset  = getInputDataset<Points>();
     auto& outputDataset = getOutputDataset<Clusters>();
