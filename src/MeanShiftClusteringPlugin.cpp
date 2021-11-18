@@ -39,22 +39,22 @@ MeanShiftClusteringPlugin::~MeanShiftClusteringPlugin()
 void MeanShiftClusteringPlugin::init()
 {
     // Create clusters output dataset
-    setOutputDatasetName(_core->addData("Cluster", "Clusters", getInputDatasetName()));
+    setOutputDataset(_core->addDataset("Cluster", "Clusters", getInputDataset()));
 
     // Get input and output datasets
-    auto& inputDataset  = getInputDataset<Points>();
-    auto& outputDataset = getOutputDataset<Clusters>();
+    auto inputDataset  = getInputDataset<Points>();
+    auto outputDataset = getOutputDataset<Clusters>();
 
     // Inject the setting action into the output dataset
-    outputDataset.addAction(_settingsAction);
+    outputDataset->addAction(_settingsAction);
 
     // Get the number of dimensions in the input dataset
-    const auto numberOfDimensions = inputDataset.getNumDimensions();
+    const auto numberOfDimensions = inputDataset->getNumDimensions();
 
     QStringList dimensionNames;
     
-    if (numberOfDimensions == inputDataset.getDimensionNames().size()) {
-        for (auto dimensionName : inputDataset.getDimensionNames())
+    if (numberOfDimensions == inputDataset->getDimensionNames().size()) {
+        for (auto dimensionName : inputDataset->getDimensionNames())
             dimensionNames << dimensionName;
     }
     else {
@@ -95,7 +95,7 @@ void MeanShiftClusteringPlugin::init()
     }
 
     // Updates the cluster colors depending on the color configuration
-    const auto updateColors = [this, &outputDataset]() -> void {
+    const auto updateColors = [this]() -> void {
         const auto colorBy = static_cast<SettingsAction::ColorBy>(_settingsAction.getColorByAction().getCurrentIndex());
 
         switch (colorBy) {
@@ -105,7 +105,7 @@ void MeanShiftClusteringPlugin::init()
                 _rng.seed(_settingsAction.getRandomSeedAction().getValue());
 
                 // Generate pseudo-random cluster colors
-                for (auto& cluster : outputDataset.getClusters()) {
+                for (auto& cluster : getOutputDataset<Clusters>()->getClusters()) {
                     const auto randomHue        = _rng.bounded(360);
                     const auto randomSaturation = _rng.bounded(150, 255);
                     const auto randomLightness  = _rng.bounded(50, 200);
@@ -120,7 +120,7 @@ void MeanShiftClusteringPlugin::init()
             case SettingsAction::ColorBy::ColorMap:
             {
                 // Get output clusters
-                auto& clusters = outputDataset.getClusters();
+                auto& clusters = getOutputDataset<Clusters>()->getClusters();
 
                 // Get scaled version of the color map image that matches the width to the number of clusters
                 const auto& colorMapImage = _settingsAction.getColorMapAction().getColorMapImage().scaled(static_cast<std::int32_t>(clusters.size()), 4);
@@ -138,7 +138,7 @@ void MeanShiftClusteringPlugin::init()
         }
     };
 
-    connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, &inputDataset, &outputDataset, updateColors]() {
+    connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, updateColors]() {
 
         // Do not run if the selected dimensions are the same
         if (_settingsAction.getDimensionOneAction().getCurrentIndex() == _settingsAction.getDimensionTwoAction().getCurrentIndex()) {
@@ -160,7 +160,8 @@ void MeanShiftClusteringPlugin::init()
         QCoreApplication::processEvents();
 
         std::vector<hdps::Vector2f> data;
-        inputDataset.extractDataForDimensions(data, _settingsAction.getDimensionOneAction().getCurrentIndex(), _settingsAction.getDimensionTwoAction().getCurrentIndex());
+
+        getInputDataset<Points>()->extractDataForDimensions(data, _settingsAction.getDimensionOneAction().getCurrentIndex(), _settingsAction.getDimensionTwoAction().getCurrentIndex());
 
         setTaskDescription("Clustering");
 
@@ -183,7 +184,7 @@ void MeanShiftClusteringPlugin::init()
         QCoreApplication::processEvents();
 
         // Remove existing clusters
-        outputDataset.getClusters().clear();
+        getOutputDataset<Clusters>()->getClusters().clear();
         
         std::int32_t clusterIndex = 0;
 
@@ -195,14 +196,15 @@ void MeanShiftClusteringPlugin::init()
             cluster.setName(QString("cluster %1").arg(QString::number(clusterIndex + 1)));
             cluster.setIndices(c);
 
-            outputDataset.addCluster(cluster);
+            getOutputDataset<Clusters>()->addCluster(cluster);
 
             clusterIndex++;
         }
 
         updateColors();
 
-        _core->notifyDataChanged(getOutputDatasetName());
+        // Notify others that clusters have changed
+        _core->notifyDataChanged(getOutputDataset());
 
         setTaskFinished();
 
@@ -227,7 +229,8 @@ void MeanShiftClusteringPlugin::init()
 
         updateColors();
 
-        _core->notifyDataChanged(getOutputDatasetName());
+        // Notify others that clusters have changed
+        _core->notifyDataChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getColorMapAction(), &ColorMapAction::imageChanged, this, [this, updateColors](const QImage& image) {
@@ -236,7 +239,8 @@ void MeanShiftClusteringPlugin::init()
 
         updateColors();
 
-        _core->notifyDataChanged(getOutputDatasetName());
+        // Notify others that clusters have changed
+        _core->notifyDataChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getRandomSeedAction(), &IntegralAction::valueChanged, this, [this, updateColors](const std::int32_t& value) {
@@ -245,13 +249,15 @@ void MeanShiftClusteringPlugin::init()
 
         updateColors();
 
-        _core->notifyDataChanged(getOutputDatasetName());
+        // Notify others that clusters have changed
+        _core->notifyDataChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getApplyColorsAction(), &TriggerAction::triggered, this, [this, updateColors](const std::int32_t& value) {
         updateColors();
 
-        _core->notifyDataChanged(getOutputDatasetName());
+        // Notify others that clusters have changed
+        _core->notifyDataChanged(getOutputDataset());
     });
 
     _offscreenBuffer.bindContext();
