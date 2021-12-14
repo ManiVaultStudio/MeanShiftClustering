@@ -32,6 +32,7 @@ source_group( External FILES ${EXTERNAL_SOURCES})
 include_directories("$ENV{HDPS_INSTALL_DIR}/$<CONFIGURATION>/include/")
 
 add_library(${PROJECT} SHARED ${SOURCES} ${EXTERNAL_SOURCES})
+set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 17)
 
 if(MSVC)
     set(LIB_LINK_SUFFIX ".lib") 
