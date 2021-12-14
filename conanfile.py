@@ -8,7 +8,7 @@ from rules_support import PluginBranchInfo
 
 
 class MeanShiftClusteringConan(ConanFile):
-    """Class to package the ENVILoader plugin using conan
+    """Class to package the MeanShiftClustering plugin using conan
 
     Packages both RELEASE and DEBUG.
     Uses rules_support (github.com/hdps/rulessupport) to derive
@@ -90,7 +90,7 @@ class MeanShiftClusteringConan(ConanFile):
         if self.settings.os == "Linux" or self.settings.os == "Macos":
             cmake.definitions["CMAKE_CXX_STANDARD_REQUIRED"] = "ON"
         cmake.definitions["CMAKE_PREFIX_PATH"] = qt_root
-        cmake.configure(source_folder="hdps/ENVILoader")
+        cmake.configure(source_folder="hdps/MeanShiftClustering")
         cmake.verbose = True
         return cmake
 
@@ -102,7 +102,7 @@ class MeanShiftClusteringConan(ConanFile):
         print("HDPS_INSTALL_DIR: ", os.environ["HDPS_INSTALL_DIR"])
         self.install_dir = os.environ["HDPS_INSTALL_DIR"]
 
-        # The ENVILoader build expects the HDPS package to be in this install dir
+        # The MeanShiftClustering build expects the HDPS package to be in this install dir
         hdps_pkg_root = self.deps_cpp_info["hdps-core"].rootpath
         print("Install dir type: ", self.install_dir)
         shutil.copytree(hdps_pkg_root, self.install_dir)
