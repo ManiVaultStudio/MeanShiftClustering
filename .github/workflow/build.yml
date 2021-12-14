@@ -1,4 +1,4 @@
-name: ENVILoader
+name: MeanShiftClustering
 
 on:
   push:
