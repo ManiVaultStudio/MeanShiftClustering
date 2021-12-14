@@ -35,7 +35,7 @@ add_library(${PROJECT} SHARED ${SOURCES} ${EXTERNAL_SOURCES})
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 17)
 
 if(MSVC)
-    set(LIB_LINK_SUFFIX ".lib") 
+    set(LIB_LINK_SUFFIX "${CMAKE_STATIC_LIBRARY_SUFFIX}") 
 else()
     set(LIB_LINK_SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}")
 endif(MSVC)
@@ -48,9 +48,10 @@ target_link_libraries(${PROJECT} Qt5::WebEngineWidgets)
 target_link_libraries(${PROJECT} "${HDPS_LINK_LIBRARY}")
 target_link_libraries(${PROJECT} "${POINTDATA_LINK_LIBRARY}")
 target_link_libraries(${PROJECT} "${CLUSTERDATA_LINK_LIBRARY}")
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_link_libraries(${PROJECT} "$ENV{HDPS_INSTALL_DIR}/$<CONFIGURATION>/Plugins/libClustersPlugin.dylib")
-endif()
+
+install(TARGETS ${PROJECT}
+   RUNTIME DESTINATION Plugins COMPONENT SHAREDLIB
+)
 
 add_custom_command(TARGET ${PROJECT} POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
