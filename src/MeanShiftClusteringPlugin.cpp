@@ -100,41 +100,12 @@ void MeanShiftClusteringPlugin::init()
 
         switch (colorBy) {
             case SettingsAction::ColorBy::PseudoRandomColors:
-            {
-                // Seed the random number generator
-                _rng.seed(_settingsAction.getRandomSeedAction().getValue());
-
-                // Generate pseudo-random cluster colors
-                for (auto& cluster : getOutputDataset<Clusters>()->getClusters()) {
-                    const auto randomHue        = _rng.bounded(360);
-                    const auto randomSaturation = _rng.bounded(150, 255);
-                    const auto randomLightness  = _rng.bounded(50, 200);
-
-                    // Create random color from hue, saturation and lightness
-                    cluster.setColor(QColor::fromHsl(randomHue, randomSaturation, randomLightness));
-                }
-
+                Cluster::colorizeClusters(getOutputDataset<Clusters>()->getClusters(), _settingsAction.getRandomSeedAction().getValue());
                 break;
-            }
 
             case SettingsAction::ColorBy::ColorMap:
-            {
-                // Get output clusters
-                auto& clusters = getOutputDataset<Clusters>()->getClusters();
-
-                // Get scaled version of the color map image that matches the width to the number of clusters
-                const auto& colorMapImage = _settingsAction.getColorMapAction().getColorMapImage().scaled(static_cast<std::int32_t>(clusters.size()), 4);
-
-                auto clusterIndex = 0;
-
-                // Color clusters according to the color map image
-                for (auto& cluster : clusters) {
-                    cluster.setColor(colorMapImage.pixel(clusterIndex, 0));
-                    clusterIndex++;
-                }
-
+                Cluster::colorizeClusters(getOutputDataset<Clusters>()->getClusters(), _settingsAction.getColorMapAction().getColorMapImage());
                 break;
-            }
         }
     };
 
