@@ -20,7 +20,7 @@ class MeanShiftClusteringPlugin : public QObject, public AnalysisPlugin
 public:
     MeanShiftClusteringPlugin(const PluginFactory* factory);
 
-    ~MeanShiftClusteringPlugin() override;
+    ~MeanShiftClusteringPlugin() override = default;
     
     void init() override;
 

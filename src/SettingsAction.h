@@ -44,7 +44,7 @@ public: // Action getters
     TriggerAction& getComputeAction() { return _computeAction; }
 
 protected:
-    MeanShiftClusteringPlugin*  _meanShiftAnalysisPlugin;       /** Pointer to mean-shift clustering plugin */
+    MeanShiftClusteringPlugin*  _meanShiftClusteringPlugin;       /** Pointer to mean-shift clustering plugin */
     OptionAction                _dimensionOneAction;            /** First dimension action */
     OptionAction                _dimensionTwoAction;            /** Second dimension action */
     DecimalAction               _sigmaAction;                   /** Sigma action */

@@ -32,10 +32,6 @@ MeanShiftClusteringPlugin::MeanShiftClusteringPlugin(const PluginFactory* factor
 {
 }
 
-MeanShiftClusteringPlugin::~MeanShiftClusteringPlugin()
-{
-}
-
 void MeanShiftClusteringPlugin::init()
 {
     // Create clusters output dataset

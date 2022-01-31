@@ -6,7 +6,7 @@ using namespace hdps::gui;
 
 SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlugin) :
     GroupAction(meanShiftClusteringPlugin, true),
-    _meanShiftAnalysisPlugin(meanShiftClusteringPlugin),
+    _meanShiftClusteringPlugin(meanShiftClusteringPlugin),
     _dimensionOneAction(this, "Dimension 1"),
     _dimensionTwoAction(this, "Dimension 2"),
     _sigmaAction(this, "Sigma", 0.05f, 0.5f, 0.15f, 0.15f, 3),
@@ -18,10 +18,17 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _computeAction(this, "Compute")
 {
     setText("Mean-shift");
+    setSerializable(true);
 
     _sigmaAction.setUpdateDuringDrag(false);
     _randomSeedAction.setUpdateDuringDrag(false);
     _computeAction.setVisible(false);
+
+    _sigmaAction.setSerializable(true);
+    _colorByAction.setSerializable(true);
+    _colorByAction.setSerializable(true);
+    _randomSeedAction.setSerializable(true);
+    _updateColorsManuallyAction.setSerializable(true);
 
     const auto updateReadOnly = [this]() -> void {
         const auto enabled  = !isReadOnly();
