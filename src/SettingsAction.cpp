@@ -18,17 +18,11 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _computeAction(this, "Compute")
 {
     setText("Mean-shift");
-    setSerializable(true);
+    setObjectName("Mean-shift/Settings");
 
     _sigmaAction.setUpdateDuringDrag(false);
     _randomSeedAction.setUpdateDuringDrag(false);
     _computeAction.setVisible(false);
-
-    _sigmaAction.setSerializable(true);
-    _colorByAction.setSerializable(true);
-    _colorByAction.setSerializable(true);
-    _randomSeedAction.setSerializable(true);
-    _updateColorsManuallyAction.setSerializable(true);
 
     const auto updateReadOnly = [this]() -> void {
         const auto enabled  = !isReadOnly();
@@ -48,4 +42,7 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     });
 
     updateReadOnly();
+
+    // Load settings from disk
+    loadDefault();
 }
