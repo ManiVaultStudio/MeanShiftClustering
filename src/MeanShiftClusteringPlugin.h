@@ -13,7 +13,7 @@ using namespace hdps::plugin;
 
 class PointsPlugin;
 
-class MeanShiftClusteringPlugin : public QObject, public AnalysisPlugin
+class MeanShiftClusteringPlugin : public AnalysisPlugin
 {
     Q_OBJECT
 

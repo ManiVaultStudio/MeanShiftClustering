@@ -30,6 +30,7 @@ MeanShiftClusteringPlugin::MeanShiftClusteringPlugin(const PluginFactory* factor
     _settingsAction(this),
     _rng(0)
 {
+    setObjectName("Mean-shift");
 }
 
 void MeanShiftClusteringPlugin::init()

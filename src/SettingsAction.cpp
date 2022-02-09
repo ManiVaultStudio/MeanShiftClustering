@@ -17,8 +17,7 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _applyColorsAction(this, "Apply colors"),
     _computeAction(this, "Compute")
 {
-    setText("Mean-shift");
-    setObjectName("Mean-shift/Settings");
+    setText("Settings");
 
     _sigmaAction.setUpdateDuringDrag(false);
     _randomSeedAction.setUpdateDuringDrag(false);
