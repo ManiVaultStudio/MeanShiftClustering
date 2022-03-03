@@ -31,6 +31,20 @@ public:
      */
     SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlugin);
 
+public: // Serialization
+
+    /**
+     * Load widget action from variant
+     * @param Variant representation of the widget action
+     */
+    void fromVariantMap(const QVariantMap& variantMap) override;
+
+    /**
+     * Save widget action to variant
+     * @return Variant representation of the widget action
+     */
+    QVariantMap toVariantMap() const override;
+
 public: // Action getters
 
     OptionAction& getDimensionOneAction() { return _dimensionOneAction; }
@@ -44,7 +58,7 @@ public: // Action getters
     TriggerAction& getComputeAction() { return _computeAction; }
 
 protected:
-    MeanShiftClusteringPlugin*  _meanShiftClusteringPlugin;       /** Pointer to mean-shift clustering plugin */
+    MeanShiftClusteringPlugin*  _meanShiftClusteringPlugin;     /** Pointer to mean-shift clustering plugin */
     OptionAction                _dimensionOneAction;            /** First dimension action */
     OptionAction                _dimensionTwoAction;            /** Second dimension action */
     DecimalAction               _sigmaAction;                   /** Sigma action */

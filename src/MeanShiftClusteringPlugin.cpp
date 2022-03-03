@@ -1,7 +1,9 @@
 #include "MeanShiftClusteringPlugin.h"
 
-#include "PointData.h"
-#include "ClusterData.h"
+#include <PointData.h>
+#include <ClusterData.h>
+
+#include <util/Serialization.h>
 
 #include <QDebug>
 #include <QtCore>
@@ -107,6 +109,10 @@ void MeanShiftClusteringPlugin::init()
     };
 
     connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, updateColors]() {
+
+        // Do compute if the settings action is disabled (for instance due to serialization)
+        if (!_settingsAction.isEnabled())
+            return;
 
         // Do not run if the selected dimensions are the same
         if (_settingsAction.getDimensionOneAction().getCurrentIndex() == _settingsAction.getDimensionTwoAction().getCurrentIndex()) {
@@ -242,6 +248,20 @@ bool MeanShiftClusteringPlugin::canCompute() const
         return false;
 
     return true;
+}
+
+void MeanShiftClusteringPlugin::fromVariantMap(const QVariantMap& variantMap)
+{
+    variantMapMustContain(variantMap, "Settings");
+
+    _settingsAction.fromVariantMap(variantMap["Settings"].toMap());
+}
+
+QVariantMap MeanShiftClusteringPlugin::toVariantMap() const
+{
+    return {
+        { "Settings", _settingsAction.toVariantMap() }
+    };
 }
 
 QIcon MeanShiftClusteringPluginFactory::getIcon() const
