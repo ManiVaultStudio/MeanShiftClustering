@@ -178,7 +178,7 @@ void MeanShiftClusteringPlugin::init()
         updateColors();
 
         // Notify others that clusters have changed
-        _core->notifyDataChanged(getOutputDataset());
+        _core->notifyDatasetChanged(getOutputDataset());
 
         setTaskFinished();
 
@@ -204,7 +204,7 @@ void MeanShiftClusteringPlugin::init()
         updateColors();
 
         // Notify others that clusters have changed
-        _core->notifyDataChanged(getOutputDataset());
+        _core->notifyDatasetChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getColorMapAction(), &ColorMapAction::imageChanged, this, [this, updateColors](const QImage& image) {
@@ -214,7 +214,7 @@ void MeanShiftClusteringPlugin::init()
         updateColors();
 
         // Notify others that clusters have changed
-        _core->notifyDataChanged(getOutputDataset());
+        _core->notifyDatasetChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getRandomSeedAction(), &IntegralAction::valueChanged, this, [this, updateColors](const std::int32_t& value) {
@@ -224,14 +224,14 @@ void MeanShiftClusteringPlugin::init()
         updateColors();
 
         // Notify others that clusters have changed
-        _core->notifyDataChanged(getOutputDataset());
+        _core->notifyDatasetChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getApplyColorsAction(), &TriggerAction::triggered, this, [this, updateColors](const std::int32_t& value) {
         updateColors();
 
         // Notify others that clusters have changed
-        _core->notifyDataChanged(getOutputDataset());
+        _core->notifyDatasetChanged(getOutputDataset());
     });
 
     _offscreenBuffer.bindContext();
