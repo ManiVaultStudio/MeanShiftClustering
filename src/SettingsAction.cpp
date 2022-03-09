@@ -2,11 +2,13 @@
 #include "Application.h"
 #include "MeanShiftClusteringPlugin.h"
 
+#include <util/Serialization.h>
+
 using namespace hdps::gui;
 
 SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlugin) :
     GroupAction(meanShiftClusteringPlugin, true),
-    _meanShiftAnalysisPlugin(meanShiftClusteringPlugin),
+    _meanShiftClusteringPlugin(meanShiftClusteringPlugin),
     _dimensionOneAction(this, "Dimension 1"),
     _dimensionTwoAction(this, "Dimension 2"),
     _sigmaAction(this, "Sigma", 0.05f, 0.5f, 0.15f, 0.15f, 3),
@@ -17,7 +19,7 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _applyColorsAction(this, "Apply colors"),
     _computeAction(this, "Compute")
 {
-    setText("Mean-shift");
+    setText("Settings");
 
     _sigmaAction.setUpdateDuringDrag(false);
     _randomSeedAction.setUpdateDuringDrag(false);
@@ -41,4 +43,40 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     });
 
     updateReadOnly();
+}
+
+void SettingsAction::fromVariantMap(const QVariantMap& variantMap)
+{
+    setEnabled(false);
+    {
+        variantMapMustContain(variantMap, "Dimension1");
+        variantMapMustContain(variantMap, "Dimension2");
+        variantMapMustContain(variantMap, "Sigma");
+        variantMapMustContain(variantMap, "ColorBy");
+        variantMapMustContain(variantMap, "ColorMap");
+        variantMapMustContain(variantMap, "RandomSeed");
+        variantMapMustContain(variantMap, "UpdateColorsManually");
+
+        _dimensionOneAction.fromVariantMap(variantMap["Dimension1"].toMap());
+        _dimensionTwoAction.fromVariantMap(variantMap["Dimension2"].toMap());
+        _sigmaAction.fromVariantMap(variantMap["Sigma"].toMap());
+        _colorByAction.fromVariantMap(variantMap["ColorBy"].toMap());
+        _colorMapAction.fromVariantMap(variantMap["ColorMap"].toMap());
+        _randomSeedAction.fromVariantMap(variantMap["RandomSeed"].toMap());
+        _updateColorsManuallyAction.fromVariantMap(variantMap["UpdateColorsManually"].toMap());
+    }
+    setEnabled(true);
+}
+
+QVariantMap SettingsAction::toVariantMap() const
+{
+    return {
+        { "Dimension1", _dimensionOneAction.toVariantMap() },
+        { "Dimension2", _dimensionTwoAction.toVariantMap() },
+        { "Sigma", _sigmaAction.toVariantMap() },
+        { "ColorBy", _colorByAction.toVariantMap() },
+        { "ColorMap", _colorMapAction.toVariantMap() },
+        { "RandomSeed", _randomSeedAction.toVariantMap() },
+        { "UpdateColorsManually", _updateColorsManuallyAction.toVariantMap() },
+    };
 }

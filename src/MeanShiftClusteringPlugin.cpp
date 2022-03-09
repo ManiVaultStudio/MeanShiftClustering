@@ -1,7 +1,9 @@
 #include "MeanShiftClusteringPlugin.h"
 
-#include "PointData.h"
-#include "ClusterData.h"
+#include <PointData.h>
+#include <ClusterData.h>
+
+#include <util/Serialization.h>
 
 #include <QDebug>
 #include <QtCore>
@@ -30,10 +32,7 @@ MeanShiftClusteringPlugin::MeanShiftClusteringPlugin(const PluginFactory* factor
     _settingsAction(this),
     _rng(0)
 {
-}
-
-MeanShiftClusteringPlugin::~MeanShiftClusteringPlugin()
-{
+    setObjectName("Mean-shift");
 }
 
 void MeanShiftClusteringPlugin::init()
@@ -111,6 +110,10 @@ void MeanShiftClusteringPlugin::init()
 
     connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, updateColors]() {
 
+        // Do compute if the settings action is disabled (for instance due to serialization)
+        if (!_settingsAction.isEnabled())
+            return;
+
         // Do not run if the selected dimensions are the same
         if (_settingsAction.getDimensionOneAction().getCurrentIndex() == _settingsAction.getDimensionTwoAction().getCurrentIndex()) {
             setTaskDescription("Input error: identical dimensions");
@@ -175,7 +178,7 @@ void MeanShiftClusteringPlugin::init()
         updateColors();
 
         // Notify others that clusters have changed
-        _core->notifyDataChanged(getOutputDataset());
+        _core->notifyDatasetChanged(getOutputDataset());
 
         setTaskFinished();
 
@@ -201,7 +204,7 @@ void MeanShiftClusteringPlugin::init()
         updateColors();
 
         // Notify others that clusters have changed
-        _core->notifyDataChanged(getOutputDataset());
+        _core->notifyDatasetChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getColorMapAction(), &ColorMapAction::imageChanged, this, [this, updateColors](const QImage& image) {
@@ -211,7 +214,7 @@ void MeanShiftClusteringPlugin::init()
         updateColors();
 
         // Notify others that clusters have changed
-        _core->notifyDataChanged(getOutputDataset());
+        _core->notifyDatasetChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getRandomSeedAction(), &IntegralAction::valueChanged, this, [this, updateColors](const std::int32_t& value) {
@@ -221,14 +224,14 @@ void MeanShiftClusteringPlugin::init()
         updateColors();
 
         // Notify others that clusters have changed
-        _core->notifyDataChanged(getOutputDataset());
+        _core->notifyDatasetChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getApplyColorsAction(), &TriggerAction::triggered, this, [this, updateColors](const std::int32_t& value) {
         updateColors();
 
         // Notify others that clusters have changed
-        _core->notifyDataChanged(getOutputDataset());
+        _core->notifyDatasetChanged(getOutputDataset());
     });
 
     _offscreenBuffer.bindContext();
@@ -245,6 +248,20 @@ bool MeanShiftClusteringPlugin::canCompute() const
         return false;
 
     return true;
+}
+
+void MeanShiftClusteringPlugin::fromVariantMap(const QVariantMap& variantMap)
+{
+    variantMapMustContain(variantMap, "Settings");
+
+    _settingsAction.fromVariantMap(variantMap["Settings"].toMap());
+}
+
+QVariantMap MeanShiftClusteringPlugin::toVariantMap() const
+{
+    return {
+        { "Settings", _settingsAction.toVariantMap() }
+    };
 }
 
 QIcon MeanShiftClusteringPluginFactory::getIcon() const

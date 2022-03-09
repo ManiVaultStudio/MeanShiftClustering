@@ -13,19 +13,33 @@ using namespace hdps::plugin;
 
 class PointsPlugin;
 
-class MeanShiftClusteringPlugin : public QObject, public AnalysisPlugin
+class MeanShiftClusteringPlugin : public AnalysisPlugin
 {
     Q_OBJECT
 
 public:
     MeanShiftClusteringPlugin(const PluginFactory* factory);
 
-    ~MeanShiftClusteringPlugin() override;
+    ~MeanShiftClusteringPlugin() override = default;
     
     void init() override;
 
     /** Establishes whether a computation can be executed */
     bool canCompute() const;
+
+public: // Serialization
+
+    /**
+     * Load widget action from variant
+     * @param Variant representation of the widget action
+     */
+    void fromVariantMap(const QVariantMap& variantMap) override;
+
+    /**
+     * Save widget action to variant
+     * @return Variant representation of the widget action
+     */
+    QVariantMap toVariantMap() const override;
 
 private:
     OffscreenBuffer     _offscreenBuffer;       /** Off-screen buffer */
