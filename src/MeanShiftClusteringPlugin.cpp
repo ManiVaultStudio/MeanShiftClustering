@@ -47,6 +47,9 @@ void MeanShiftClusteringPlugin::init()
     // Inject the setting action into the output dataset
     outputDataset->addAction(_settingsAction);
 
+    // Select the dataset
+    outputDataset->getDataHierarchyItem().select();
+
     // Get the number of dimensions in the input dataset
     const auto numberOfDimensions = inputDataset->getNumDimensions();
 
