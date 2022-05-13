@@ -2,12 +2,6 @@ name: MeanShiftClustering
 
 on:
   push:
-    branches:
-      - master
-      - main
-      - release/*
-      - feature/*
-
   pull_request:
   workflow_dispatch:
 
