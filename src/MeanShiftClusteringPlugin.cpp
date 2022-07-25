@@ -308,9 +308,24 @@ AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()
     return new MeanShiftClusteringPlugin(this);
 }
 
-hdps::DataTypes MeanShiftClusteringPluginFactory::supportedDataTypes() const
+QList<QAction*> MeanShiftClusteringPluginFactory::getProducers(const hdps::Datasets& datasets) const
 {
-    DataTypes supportedTypes;
-    supportedTypes.append(PointType);
-    return supportedTypes;
+    QList<QAction*> producerActions;
+
+    const auto getInstance = [this](Dataset<Points> dataset) -> MeanShiftClusteringPlugin* {
+        return dynamic_cast<MeanShiftClusteringPlugin*>(Application::core()->requestPlugin(getKind(), Datasets({ dataset })));
+    };
+
+    if (PluginFactory::areAllDatasetsOfTheSameType(datasets, "Points")) {
+        auto producerAction = createProducerAction("Mean-shift analysis", "Apply mean-shift analysis on selected dataset(s)");
+
+        connect(producerAction, &QAction::triggered, [this, getInstance, datasets]() -> void {
+            for (auto dataset : datasets)
+                getInstance(dataset);
+        });
+
+        producerActions << producerAction;
+    }
+
+    return producerActions;
 }
