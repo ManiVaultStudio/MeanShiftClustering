@@ -57,7 +57,7 @@ add_custom_command(TARGET ${PROJECT} POST_BUILD
 	COMMAND "${CMAKE_COMMAND}"
 	--install ${CMAKE_CURRENT_BINARY_DIR}
 	--config $<CONFIGURATION>
-	--prefix ${INSTALL_DIR}/$<CONFIGURATION>
+	--prefix $ENV{HDPS_INSTALL_DIR}/$<CONFIGURATION>
 )
 
 # Automatically set the debug environment (command + working directory) for MSVC in debug mode
