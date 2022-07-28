@@ -267,7 +267,7 @@ QVariantMap MeanShiftClusteringPlugin::toVariantMap() const
     };
 }
 
-QIcon MeanShiftClusteringPluginFactory::getIcon() const
+QIcon MeanShiftClusteringPluginFactory::getIcon(const QColor& color /*= Qt::black*/) const
 {
     const auto margin       = 3;
     const auto pixmapSize   = QSize(100, 100);
