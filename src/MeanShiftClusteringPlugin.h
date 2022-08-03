@@ -7,9 +7,12 @@
 #include "graphics/OffscreenBuffer.h"
 #include "actions/Actions.h"
 
+#include <actions/TriggerAction.h>
+
 #include <QRandomGenerator>
 
 using namespace hdps::plugin;
+using namespace hdps::gui;
 
 class PointsPlugin;
 
@@ -69,9 +72,9 @@ public:
     AnalysisPlugin* produce() override;
 
     /**
-     * Get a list of producer actions given a sequence of input datasets
+     * Get a list of producer trigger actions given a sequence of input datasets
      * @param datasets Sequence of input datasets (order in which they were selected in the data hierarchy)
-     * @return List of producer actions with which one (or more) plugins can be triggered
+     * @return List of producer trigger actions with which one (or more) plugins can be triggered
      */
-    QList<QAction*> getProducers(const hdps::Datasets& datasets) const override;
+    QList<TriggerAction*> getProducers(const hdps::Datasets& datasets) const override;
 };
