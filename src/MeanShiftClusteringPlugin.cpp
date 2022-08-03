@@ -271,7 +271,7 @@ QVariantMap MeanShiftClusteringPlugin::toVariantMap() const
 
 QIcon MeanShiftClusteringPluginFactory::getIcon(const QColor& color /*= Qt::black*/) const
 {
-    return createPluginIcon("MSC");
+    return createPluginIcon("MS");
 }
 
 AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()
