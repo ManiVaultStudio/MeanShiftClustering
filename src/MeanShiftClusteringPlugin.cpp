@@ -281,9 +281,9 @@ AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()
     return new MeanShiftClusteringPlugin(this);
 }
 
-QList<PluginTriggerAction*> MeanShiftClusteringPluginFactory::getPluginTriggerActions(const hdps::Datasets& datasets) const
+PluginTriggerActions MeanShiftClusteringPluginFactory::getPluginTriggerActions(const hdps::Datasets& datasets) const
 {
-    QList<PluginTriggerAction*> pluginTriggerActions;
+    PluginTriggerActions pluginTriggerActions;
 
     const auto getInstance = [this](Dataset<Points> dataset) -> MeanShiftClusteringPlugin* {
         return dynamic_cast<MeanShiftClusteringPlugin*>(Application::core()->requestPlugin(getKind(), Datasets({ dataset })));
