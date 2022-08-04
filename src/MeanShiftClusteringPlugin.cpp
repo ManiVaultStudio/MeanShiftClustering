@@ -5,6 +5,8 @@
 
 #include <util/Serialization.h>
 
+#include <actions/PluginTriggerAction.h>
+
 #include <QDebug>
 #include <QtCore>
 #include <QMessageBox>
@@ -279,24 +281,24 @@ AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()
     return new MeanShiftClusteringPlugin(this);
 }
 
-QList<TriggerAction*> MeanShiftClusteringPluginFactory::getProducers(const hdps::Datasets& datasets) const
+QList<PluginTriggerAction*> MeanShiftClusteringPluginFactory::getPluginTriggerActions(const hdps::Datasets& datasets) const
 {
-    QList<TriggerAction*> producerActions;
+    QList<PluginTriggerAction*> pluginTriggerActions;
 
     const auto getInstance = [this](Dataset<Points> dataset) -> MeanShiftClusteringPlugin* {
         return dynamic_cast<MeanShiftClusteringPlugin*>(Application::core()->requestPlugin(getKind(), Datasets({ dataset })));
     };
 
     if (PluginFactory::areAllDatasetsOfTheSameType(datasets, "Points")) {
-        auto producerAction = createProducerAction("Mean-shift analysis", "Apply mean-shift analysis on selected dataset(s)");
+        auto pluginTriggerAction = createPluginTriggerAction("Mean-shift analysis", "Apply mean-shift analysis on selected dataset(s)", datasets);
 
-        connect(producerAction, &QAction::triggered, [this, getInstance, datasets]() -> void {
+        connect(pluginTriggerAction, &QAction::triggered, [this, getInstance, datasets]() -> void {
             for (auto dataset : datasets)
                 getInstance(dataset);
         });
 
-        producerActions << producerAction;
+        pluginTriggerActions << pluginTriggerAction;
     }
 
-    return producerActions;
+    return pluginTriggerActions;
 }
