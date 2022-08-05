@@ -289,7 +289,7 @@ PluginTriggerActions MeanShiftClusteringPluginFactory::getPluginTriggerActions(c
         return dynamic_cast<MeanShiftClusteringPlugin*>(Application::core()->requestPlugin(getKind(), Datasets({ dataset })));
     };
 
-    if (PluginFactory::areAllDatasetsOfTheSameType(datasets, PointType)) {
+    if (!datasets.isEmpty() && PluginFactory::areAllDatasetsOfTheSameType(datasets, PointType)) {
         auto pluginTriggerAction = createPluginTriggerAction("Mean-shift analysis", "Apply mean-shift analysis on selected dataset(s)", datasets);
 
         connect(pluginTriggerAction, &QAction::triggered, [this, getInstance, datasets]() -> void {
