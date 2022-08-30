@@ -7,9 +7,12 @@
 #include "graphics/OffscreenBuffer.h"
 #include "actions/Actions.h"
 
+#include <actions/TriggerAction.h>
+
 #include <QRandomGenerator>
 
 using namespace hdps::plugin;
+using namespace hdps::gui;
 
 class PointsPlugin;
 
@@ -59,10 +62,19 @@ public:
     MeanShiftClusteringPluginFactory(void) {}
     ~MeanShiftClusteringPluginFactory(void) override {}
 
-    /** Returns the plugin icon */
-    QIcon getIcon() const override;
+    /**
+     * Get plugin icon
+     * @param color Icon color for flat (font) icons
+     * @return Icon
+     */
+    QIcon getIcon(const QColor& color = Qt::black) const override;
 
     AnalysisPlugin* produce() override;
 
-    hdps::DataTypes supportedDataTypes() const override;
+    /**
+     * Get plugin trigger actions given \p datasets
+     * @param datasets Vector of input datasets
+     * @return Vector of plugin trigger actions
+     */
+    PluginTriggerActions getPluginTriggerActions(const hdps::Datasets& datasets) const override;
 };

@@ -5,6 +5,8 @@
 
 #include <util/Serialization.h>
 
+#include <actions/PluginTriggerAction.h>
+
 #include <QDebug>
 #include <QtCore>
 #include <QMessageBox>
@@ -17,6 +19,8 @@
 #include <random>
 #include <vector>
 #include <unordered_map>
+
+#include <util/Icon.h>
 
 #define NO_FILE 0
 
@@ -267,40 +271,9 @@ QVariantMap MeanShiftClusteringPlugin::toVariantMap() const
     };
 }
 
-QIcon MeanShiftClusteringPluginFactory::getIcon() const
+QIcon MeanShiftClusteringPluginFactory::getIcon(const QColor& color /*= Qt::black*/) const
 {
-    const auto margin       = 3;
-    const auto pixmapSize   = QSize(100, 100);
-    const auto pixmapRect   = QRect(QPoint(), pixmapSize).marginsRemoved(QMargins(margin, margin, margin, margin));
-    const auto halfSize     = pixmapRect.size() / 2;
-    const auto quarterSize  = halfSize / 2;
-
-    // Create pixmap
-    QPixmap pixmap(pixmapSize);
-
-    // Fill with a transparent background
-    pixmap.fill(Qt::transparent);
-
-    // Create a painter to draw in the pixmap
-    QPainter painter(&pixmap);
-
-    // Enable anti-aliasing
-    painter.setRenderHint(QPainter::Antialiasing);
-
-    // Get the text color from the application
-    const auto textColor = QApplication::palette().text().color();
-
-    // Configure painter
-    painter.setPen(QPen(textColor, 1, Qt::SolidLine, Qt::SquareCap, Qt::SvgMiterJoin));
-    painter.setFont(QFont("Arial", 38, 250));
-
-    const auto textOption = QTextOption(Qt::AlignCenter);
-
-    // Do the painting
-    painter.drawText(QRect(QPoint(pixmapRect.left(), pixmapRect.center().y() - quarterSize.height()), halfSize), "M", textOption);
-    painter.drawText(QRect(QPoint(pixmapRect.center().x(), pixmapRect.center().y() - quarterSize.height()), halfSize), "S", textOption);
-
-    return QIcon(pixmap);
+    return createPluginIcon("MS", color);
 }
 
 AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()
@@ -308,9 +281,24 @@ AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()
     return new MeanShiftClusteringPlugin(this);
 }
 
-hdps::DataTypes MeanShiftClusteringPluginFactory::supportedDataTypes() const
+PluginTriggerActions MeanShiftClusteringPluginFactory::getPluginTriggerActions(const hdps::Datasets& datasets) const
 {
-    DataTypes supportedTypes;
-    supportedTypes.append(PointType);
-    return supportedTypes;
+    PluginTriggerActions pluginTriggerActions;
+
+    const auto getInstance = [this](Dataset<Points> dataset) -> MeanShiftClusteringPlugin* {
+        return dynamic_cast<MeanShiftClusteringPlugin*>(Application::core()->requestPlugin(getKind(), Datasets({ dataset })));
+    };
+
+    if (!datasets.isEmpty() && PluginFactory::areAllDatasetsOfTheSameType(datasets, PointType)) {
+        auto pluginTriggerAction = createPluginTriggerAction("Mean-shift analysis", "Apply mean-shift analysis on selected dataset(s)", datasets);
+
+        connect(pluginTriggerAction, &QAction::triggered, [this, getInstance, datasets]() -> void {
+            for (auto dataset : datasets)
+                getInstance(dataset);
+        });
+
+        pluginTriggerActions << pluginTriggerAction;
+    }
+
+    return pluginTriggerActions;
 }
