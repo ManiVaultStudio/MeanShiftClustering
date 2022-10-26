@@ -169,13 +169,25 @@ void MeanShiftClusteringPlugin::init()
         
         std::int32_t clusterIndex = 0;
 
+        std::vector<std::uint32_t> globalIndices;
+
+        getInputDataset<Points>()->getSourceDataset<Points>()->getGlobalIndices(globalIndices);
+
         // Add found clusters
-        for (auto c : clusters)
+        for (auto clusterIndicesLocal : clusters)
         {
             Cluster cluster;
 
             cluster.setName(QString("cluster %1").arg(QString::number(clusterIndex + 1)));
-            cluster.setIndices(c);
+
+            std::vector<std::uint32_t> clusterIndicesGlobal;
+
+            clusterIndicesGlobal.reserve(clusterIndicesLocal.size());
+
+            for (auto clusterIndexLocal : clusterIndicesLocal)
+                clusterIndicesGlobal.push_back(globalIndices[clusterIndexLocal]);
+
+            cluster.setIndices(clusterIndicesGlobal);
 
             getOutputDataset<Clusters>()->addCluster(cluster);
 
@@ -290,7 +302,7 @@ PluginTriggerActions MeanShiftClusteringPluginFactory::getPluginTriggerActions(c
     };
 
     if (!datasets.isEmpty() && PluginFactory::areAllDatasetsOfTheSameType(datasets, PointType)) {
-        auto pluginTriggerAction = createPluginTriggerAction("Mean-shift analysis", "Apply mean-shift analysis on selected dataset(s)", datasets);
+        auto pluginTriggerAction = createPluginTriggerAction("Mean-shift analysis", "Apply mean-shift analysis on each selected dataset(s)", datasets);
 
         connect(pluginTriggerAction, &QAction::triggered, [this, getInstance, datasets]() -> void {
             for (auto dataset : datasets)
