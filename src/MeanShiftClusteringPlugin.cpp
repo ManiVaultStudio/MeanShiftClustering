@@ -3,7 +3,7 @@
 #include <PointData.h>
 #include <ClusterData.h>
 
-#include <util/Serialization.h>
+#include <Serialization.h>
 
 #include <actions/PluginTriggerAction.h>
 
