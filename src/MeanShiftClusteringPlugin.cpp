@@ -3,7 +3,7 @@
 #include <PointData.h>
 #include <ClusterData.h>
 
-#include <Serialization.h>
+#include <util/Serialization.h>
 
 #include <actions/PluginTriggerAction.h>
 
@@ -196,8 +196,7 @@ void MeanShiftClusteringPlugin::init()
 
         updateColors();
 
-        // Notify others that clusters have changed
-        _core->notifyDatasetChanged(getOutputDataset());
+        events().notifyDatasetChanged(getOutputDataset());
 
         setTaskFinished();
 
@@ -222,8 +221,7 @@ void MeanShiftClusteringPlugin::init()
 
         updateColors();
 
-        // Notify others that clusters have changed
-        _core->notifyDatasetChanged(getOutputDataset());
+        events().notifyDatasetChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getColorMapAction(), &ColorMapAction::imageChanged, this, [this, updateColors](const QImage& image) {
@@ -232,8 +230,7 @@ void MeanShiftClusteringPlugin::init()
 
         updateColors();
 
-        // Notify others that clusters have changed
-        _core->notifyDatasetChanged(getOutputDataset());
+        events().notifyDatasetChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getRandomSeedAction(), &IntegralAction::valueChanged, this, [this, updateColors](const std::int32_t& value) {
@@ -242,15 +239,13 @@ void MeanShiftClusteringPlugin::init()
 
         updateColors();
 
-        // Notify others that clusters have changed
-        _core->notifyDatasetChanged(getOutputDataset());
+        events().notifyDatasetChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getApplyColorsAction(), &TriggerAction::triggered, this, [this, updateColors](const std::int32_t& value) {
         updateColors();
 
-        // Notify others that clusters have changed
-        _core->notifyDatasetChanged(getOutputDataset());
+        events().notifyDatasetChanged(getOutputDataset());
     });
 
     _offscreenBuffer.bindContext();
@@ -271,16 +266,11 @@ bool MeanShiftClusteringPlugin::canCompute() const
 
 void MeanShiftClusteringPlugin::fromVariantMap(const QVariantMap& variantMap)
 {
-    variantMapMustContain(variantMap, "Settings");
-
-    _settingsAction.fromVariantMap(variantMap["Settings"].toMap());
 }
 
 QVariantMap MeanShiftClusteringPlugin::toVariantMap() const
 {
-    return {
-        { "Settings", _settingsAction.toVariantMap() }
-    };
+    return QVariantMap();
 }
 
 QIcon MeanShiftClusteringPluginFactory::getIcon(const QColor& color /*= Qt::black*/) const
@@ -298,13 +288,11 @@ PluginTriggerActions MeanShiftClusteringPluginFactory::getPluginTriggerActions(c
     PluginTriggerActions pluginTriggerActions;
 
     const auto getInstance = [this](Dataset<Points> dataset) -> MeanShiftClusteringPlugin* {
-        return dynamic_cast<MeanShiftClusteringPlugin*>(Application::core()->requestPlugin(getKind(), Datasets({ dataset })));
+        return dynamic_cast<MeanShiftClusteringPlugin*>(plugins().requestPlugin(getKind(), Datasets({ dataset })));
     };
 
     if (!datasets.isEmpty() && PluginFactory::areAllDatasetsOfTheSameType(datasets, PointType)) {
-        auto pluginTriggerAction = createPluginTriggerAction("Mean-shift analysis", "Apply mean-shift analysis on each selected dataset(s)", datasets);
-
-        connect(pluginTriggerAction, &QAction::triggered, [this, getInstance, datasets]() -> void {
+        auto pluginTriggerAction = new PluginTriggerAction(const_cast<MeanShiftClusteringPluginFactory*>(this), this, "Mean-shift analysis", "Apply mean-shift analysis on each selected dataset(s)", getIcon(), [this, getInstance, datasets](PluginTriggerAction& pluginTriggerAction) -> void {
             for (auto dataset : datasets)
                 getInstance(dataset);
         });
