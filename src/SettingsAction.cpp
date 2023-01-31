@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "MeanShiftClusteringPlugin.h"
 
-#include <Serialization.h>
+#include <util/Serialization.h>
 
 using namespace hdps::gui;
 
