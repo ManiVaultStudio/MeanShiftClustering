@@ -49,13 +49,13 @@ void SettingsAction::fromVariantMap(const QVariantMap& variantMap)
 {
     setEnabled(false);
     {
-        variantMapMustContain(variantMap, "Dimension1");
-        variantMapMustContain(variantMap, "Dimension2");
-        variantMapMustContain(variantMap, "Sigma");
-        variantMapMustContain(variantMap, "ColorBy");
-        variantMapMustContain(variantMap, "ColorMap");
-        variantMapMustContain(variantMap, "RandomSeed");
-        variantMapMustContain(variantMap, "UpdateColorsManually");
+        hdps::util::variantMapMustContain(variantMap, "Dimension1");
+        hdps::util::variantMapMustContain(variantMap, "Dimension2");
+        hdps::util::variantMapMustContain(variantMap, "Sigma");
+        hdps::util::variantMapMustContain(variantMap, "ColorBy");
+        hdps::util::variantMapMustContain(variantMap, "ColorMap");
+        hdps::util::variantMapMustContain(variantMap, "RandomSeed");
+        hdps::util::variantMapMustContain(variantMap, "UpdateColorsManually");
 
         _dimensionOneAction.fromVariantMap(variantMap["Dimension1"].toMap());
         _dimensionTwoAction.fromVariantMap(variantMap["Dimension2"].toMap());
