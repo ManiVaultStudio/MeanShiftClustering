@@ -80,9 +80,9 @@ void MeanShiftClusteringPlugin::init()
     // Handle dataset with only one dimension
     if (numberOfDimensions == 1) {
         _settingsAction.getDimensionOneAction().setCurrentIndex(0);
-        _settingsAction.getDimensionOneAction().setDefaultIndex(0);
+//        _settingsAction.getDimensionOneAction().setDefaultIndex(0);
         _settingsAction.getDimensionTwoAction().setCurrentIndex(0);
-        _settingsAction.getDimensionTwoAction().setDefaultIndex(0);
+//        _settingsAction.getDimensionTwoAction().setDefaultIndex(0);
 
         QMessageBox warning;
 
@@ -95,9 +95,9 @@ void MeanShiftClusteringPlugin::init()
     // Handle dataset with two or more dimensions
     if (numberOfDimensions >= 2) {
         _settingsAction.getDimensionOneAction().setCurrentIndex(0);
-        _settingsAction.getDimensionOneAction().setDefaultIndex(0);
+//        _settingsAction.getDimensionOneAction().setDefaultIndex(0);
         _settingsAction.getDimensionTwoAction().setCurrentIndex(1);
-        _settingsAction.getDimensionTwoAction().setDefaultIndex(1);
+//        _settingsAction.getDimensionTwoAction().setDefaultIndex(1);
     }
 
     // Updates the cluster colors depending on the color configuration
@@ -165,7 +165,8 @@ void MeanShiftClusteringPlugin::init()
         QCoreApplication::processEvents();
 
         // Remove existing clusters
-        getOutputDataset<Clusters>()->getClusters().clear();
+        auto outDataset = getOutputDataset<Clusters>();
+        outDataset->getClusters().clear();
         
         std::int32_t clusterIndex = 0;
 
@@ -189,14 +190,14 @@ void MeanShiftClusteringPlugin::init()
 
             cluster.setIndices(clusterIndicesGlobal);
 
-            getOutputDataset<Clusters>()->addCluster(cluster);
+            outDataset->addCluster(cluster);
 
             clusterIndex++;
         }
 
         updateColors();
 
-        events().notifyDatasetChanged(getOutputDataset());
+        events().notifyDatasetDataChanged(outDataset);
 
         setTaskFinished();
 
@@ -221,7 +222,7 @@ void MeanShiftClusteringPlugin::init()
 
         updateColors();
 
-        events().notifyDatasetChanged(getOutputDataset());
+        events().notifyDatasetDataChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getColorMapAction(), &ColorMapAction::imageChanged, this, [this, updateColors](const QImage& image) {
@@ -230,7 +231,7 @@ void MeanShiftClusteringPlugin::init()
 
         updateColors();
 
-        events().notifyDatasetChanged(getOutputDataset());
+        events().notifyDatasetDataChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getRandomSeedAction(), &IntegralAction::valueChanged, this, [this, updateColors](const std::int32_t& value) {
@@ -239,13 +240,13 @@ void MeanShiftClusteringPlugin::init()
 
         updateColors();
 
-        events().notifyDatasetChanged(getOutputDataset());
+        events().notifyDatasetDataChanged(getOutputDataset());
     });
 
     connect(&_settingsAction.getApplyColorsAction(), &TriggerAction::triggered, this, [this, updateColors](const std::int32_t& value) {
         updateColors();
 
-        events().notifyDatasetChanged(getOutputDataset());
+        events().notifyDatasetDataChanged(getOutputDataset());
     });
 
     _offscreenBuffer.bindContext();

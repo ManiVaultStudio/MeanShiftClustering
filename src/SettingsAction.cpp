@@ -7,15 +7,15 @@
 using namespace hdps::gui;
 
 SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlugin) :
-    GroupAction(meanShiftClusteringPlugin, true),
+    GroupAction(meanShiftClusteringPlugin, "SettingsAction", true),
     _meanShiftClusteringPlugin(meanShiftClusteringPlugin),
     _dimensionOneAction(this, "Dimension 1"),
     _dimensionTwoAction(this, "Dimension 2"),
-    _sigmaAction(this, "Sigma", 0.01, 0.5, 0.15, 0.15, 3),
-    _colorByAction(this, "Color by", QStringList({"Pseudo-random colors", "Color map"}), "Color map", "Color map"),
+    _sigmaAction(this, "Sigma", 0.01, 0.5, 0.15, 0.15),
+    _colorByAction(this, "Color by", QStringList({"Pseudo-random colors", "Color map"}), "Color map"),
     _colorMapAction(this, "Color map"),
     _randomSeedAction(this, "Random seed"),
-    _updateColorsManuallyAction(this, "Update colors manually", false, false),
+    _updateColorsManuallyAction(this, "Update colors manually", false),
     _applyColorsAction(this, "Apply colors"),
     _computeAction(this, "Compute")
 {
