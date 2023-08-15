@@ -11,7 +11,7 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _meanShiftClusteringPlugin(meanShiftClusteringPlugin),
     _dimensionOneAction(this, "Dimension 1"),
     _dimensionTwoAction(this, "Dimension 2"),
-    _sigmaAction(this, "Sigma", 0.01, 0.5, 0.15, 0.15),
+    _sigmaAction(this, "Sigma", 0.01, 0.5, 0.15, 3),
     _colorByAction(this, "Color by", QStringList({"Pseudo-random colors", "Color map"}), "Color map"),
     _colorMapAction(this, "Color map"),
     _randomSeedAction(this, "Random seed"),
@@ -24,6 +24,16 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _sigmaAction.setUpdateDuringDrag(false);
     _randomSeedAction.setUpdateDuringDrag(false);
     _computeAction.setVisible(false);
+
+    addAction(&_dimensionOneAction);
+    addAction(&_dimensionTwoAction);
+    addAction(&_sigmaAction);
+    addAction(&_colorByAction);
+    addAction(&_colorMapAction);
+    addAction(&_randomSeedAction);
+    addAction(&_updateColorsManuallyAction);
+    addAction(&_applyColorsAction);
+    addAction(&_computeAction);
 
     const auto updateReadOnly = [this]() -> void {
         const auto enabled  = !isReadOnly();
