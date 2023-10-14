@@ -5,7 +5,6 @@
 
 #include "util/MeanShift.h"
 #include "graphics/OffscreenBuffer.h"
-#include "actions/Actions.h"
 
 #include <actions/TriggerAction.h>
 
@@ -45,10 +44,10 @@ public: // Serialization
     QVariantMap toVariantMap() const override;
 
 private:
-    OffscreenBuffer     _offscreenBuffer;       /** Off-screen buffer */
-    hdps::MeanShift     _meanShift;             /** Mean-shift analysis */
-    SettingsAction      _settingsAction;        /** Settings action */
-    QRandomGenerator    _rng;                   /** Random number generator for pseudo-random colors */
+    OffscreenBuffer         _offscreenBuffer;       /** Off-screen buffer */
+    hdps::MeanShift         _meanShift;             /** Mean-shift analysis */
+    SettingsAction          _settingsAction;        /** Settings action */
+    QRandomGenerator        _rng;                   /** Random number generator for pseudo-random colors */
 };
 
 class MeanShiftClusteringPluginFactory : public AnalysisPluginFactory

@@ -115,7 +115,9 @@ void MeanShiftClusteringPlugin::init()
         }
     };
 
-    connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, updateColors]() {
+    auto& task = getOutputDataset()->getDatasetTask();
+
+    connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, updateColors, &task]() {
 
         // Do compute if the settings action is disabled (for instance due to serialization)
         if (!_settingsAction.isEnabled())
@@ -123,7 +125,7 @@ void MeanShiftClusteringPlugin::init()
 
         // Do not run if the selected dimensions are the same
         if (_settingsAction.getDimensionOneAction().getCurrentIndex() == _settingsAction.getDimensionTwoAction().getCurrentIndex()) {
-            setTaskDescription("Input error: identical dimensions");
+            task.setProgressDescription("Input error: identical dimensions");
             return;
         }
 
@@ -133,10 +135,10 @@ void MeanShiftClusteringPlugin::init()
         // Disable the settings when computing
         _settingsAction.setEnabled(false);
 
-        setTaskRunning();
-        setTaskName("Mean-shift clustering");
-        setTaskProgress(0.0f);
-        setTaskDescription("Initializing");
+        task.reset();
+        task.setRunning();
+        task.setName("Mean-shift on " + getInputDataset()->getLocation());
+        task.setProgressDescription("Initializing");
 
         QCoreApplication::processEvents();
 
@@ -144,7 +146,7 @@ void MeanShiftClusteringPlugin::init()
 
         getInputDataset<Points>()->extractDataForDimensions(data, _settingsAction.getDimensionOneAction().getCurrentIndex(), _settingsAction.getDimensionTwoAction().getCurrentIndex());
 
-        setTaskDescription("Clustering");
+        task.setProgressDescription("Clustering");
 
         QCoreApplication::processEvents();
 
@@ -152,7 +154,7 @@ void MeanShiftClusteringPlugin::init()
 
         std::vector<std::vector<unsigned int>> clusters;
 
-        setTaskProgress(0.2f);
+        task.setProgress(0.2f);
 
         QCoreApplication::processEvents();
 
@@ -160,7 +162,7 @@ void MeanShiftClusteringPlugin::init()
         _meanShift.cluster(data, clusters);
         _offscreenBuffer.releaseContext();
 
-        setTaskProgress(0.7f);
+        task.setProgress(0.7f);
 
         QCoreApplication::processEvents();
 
@@ -199,7 +201,7 @@ void MeanShiftClusteringPlugin::init()
 
         events().notifyDatasetDataChanged(outDataset);
 
-        setTaskFinished();
+        task.setFinished();
 
         _settingsAction.setEnabled(true);
     });
