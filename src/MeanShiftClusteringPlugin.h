@@ -10,8 +10,8 @@
 
 #include <QRandomGenerator>
 
-using namespace hdps::plugin;
-using namespace hdps::gui;
+using namespace mv::plugin;
+using namespace mv::gui;
 
 class PointsPlugin;
 
@@ -45,14 +45,14 @@ public: // Serialization
 
 private:
     OffscreenBuffer         _offscreenBuffer;       /** Off-screen buffer */
-    hdps::MeanShift         _meanShift;             /** Mean-shift analysis */
+    mv::MeanShift           _meanShift;             /** Mean-shift analysis */
     SettingsAction          _settingsAction;        /** Settings action */
     QRandomGenerator        _rng;                   /** Random number generator for pseudo-random colors */
 };
 
 class MeanShiftClusteringPluginFactory : public AnalysisPluginFactory
 {
-    Q_INTERFACES(hdps::plugin::AnalysisPluginFactory hdps::plugin::PluginFactory)
+    Q_INTERFACES(mv::plugin::AnalysisPluginFactory mv::plugin::PluginFactory)
     Q_OBJECT
     Q_PLUGIN_METADATA(IID   "nl.BioVault.MeanShiftClusteringPlugin"
                       FILE  "MeanShiftClusteringPlugin.json")
@@ -75,5 +75,5 @@ public:
      * @param datasets Vector of input datasets
      * @return Vector of plugin trigger actions
      */
-    PluginTriggerActions getPluginTriggerActions(const hdps::Datasets& datasets) const override;
+    PluginTriggerActions getPluginTriggerActions(const mv::Datasets& datasets) const override;
 };

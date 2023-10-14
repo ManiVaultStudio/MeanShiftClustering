@@ -6,7 +6,7 @@
 class QMenu;
 class MeanShiftClusteringPlugin;
 
-using namespace hdps::gui;
+using namespace mv::gui;
 
 /**
  * Settings action class

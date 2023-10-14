@@ -26,8 +26,8 @@
 
 Q_PLUGIN_METADATA(IID "nl.BioVault.MeanShift")
 
-using namespace hdps;
-using namespace hdps::gui;
+using namespace mv;
+using namespace mv::gui;
 
 MeanShiftClusteringPlugin::MeanShiftClusteringPlugin(const PluginFactory* factory) :
     AnalysisPlugin(factory),
@@ -142,7 +142,7 @@ void MeanShiftClusteringPlugin::init()
 
         QCoreApplication::processEvents();
 
-        std::vector<hdps::Vector2f> data;
+        std::vector<mv::Vector2f> data;
 
         getInputDataset<Points>()->extractDataForDimensions(data, _settingsAction.getDimensionOneAction().getCurrentIndex(), _settingsAction.getDimensionTwoAction().getCurrentIndex());
 
@@ -286,7 +286,7 @@ AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()
     return new MeanShiftClusteringPlugin(this);
 }
 
-PluginTriggerActions MeanShiftClusteringPluginFactory::getPluginTriggerActions(const hdps::Datasets& datasets) const
+PluginTriggerActions MeanShiftClusteringPluginFactory::getPluginTriggerActions(const mv::Datasets& datasets) const
 {
     PluginTriggerActions pluginTriggerActions;
 
