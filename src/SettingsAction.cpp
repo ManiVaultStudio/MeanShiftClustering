@@ -4,7 +4,7 @@
 
 #include <util/Serialization.h>
 
-using namespace hdps::gui;
+using namespace mv::gui;
 
 SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlugin) :
     GroupAction(meanShiftClusteringPlugin, "SettingsAction", true),
@@ -59,13 +59,13 @@ void SettingsAction::fromVariantMap(const QVariantMap& variantMap)
 {
     setEnabled(false);
     {
-        hdps::util::variantMapMustContain(variantMap, "Dimension1");
-        hdps::util::variantMapMustContain(variantMap, "Dimension2");
-        hdps::util::variantMapMustContain(variantMap, "Sigma");
-        hdps::util::variantMapMustContain(variantMap, "ColorBy");
-        hdps::util::variantMapMustContain(variantMap, "ColorMap");
-        hdps::util::variantMapMustContain(variantMap, "RandomSeed");
-        hdps::util::variantMapMustContain(variantMap, "UpdateColorsManually");
+        mv::util::variantMapMustContain(variantMap, "Dimension1");
+        mv::util::variantMapMustContain(variantMap, "Dimension2");
+        mv::util::variantMapMustContain(variantMap, "Sigma");
+        mv::util::variantMapMustContain(variantMap, "ColorBy");
+        mv::util::variantMapMustContain(variantMap, "ColorMap");
+        mv::util::variantMapMustContain(variantMap, "RandomSeed");
+        mv::util::variantMapMustContain(variantMap, "UpdateColorsManually");
 
         _dimensionOneAction.fromVariantMap(variantMap["Dimension1"].toMap());
         _dimensionTwoAction.fromVariantMap(variantMap["Dimension2"].toMap());
