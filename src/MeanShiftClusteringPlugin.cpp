@@ -115,7 +115,7 @@ void MeanShiftClusteringPlugin::init()
         }
     };
 
-    auto& task = getOutputDataset()->getDatasetTask();
+    auto& task = getOutputDataset()->getTask();
 
     connect(&_settingsAction.getComputeAction(), &TriggerAction::triggered, this, [this, updateColors, &task]() {
 
