@@ -42,7 +42,7 @@ MeanShiftClusteringPlugin::MeanShiftClusteringPlugin(const PluginFactory* factor
 void MeanShiftClusteringPlugin::init()
 {
     // Create clusters output dataset
-    setOutputDataset(_core->addDataset("Cluster", "Clusters (mean-shift)", getInputDataset()));
+    setOutputDataset(mv::data().createDataset("Cluster", "Clusters (mean-shift)", getInputDataset()));
 
     // Get input and output datasets
     auto inputDataset  = getInputDataset<Points>();
