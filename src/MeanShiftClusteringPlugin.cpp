@@ -261,7 +261,7 @@ void MeanShiftClusteringPlugin::init()
 
 bool MeanShiftClusteringPlugin::canCompute() const
 {
-    if (!_input.isValid())
+    if (!const_cast<MeanShiftClusteringPlugin*>(this)->getInputDataset<Points>().isValid())
         return false;
 
     return true;
