@@ -54,7 +54,7 @@ class MeanShiftClusteringPluginFactory : public AnalysisPluginFactory
 {
     Q_INTERFACES(mv::plugin::AnalysisPluginFactory mv::plugin::PluginFactory)
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID   "nl.BioVault.MeanShiftClusteringPlugin"
+    Q_PLUGIN_METADATA(IID   "studio.manivault.MeanShiftClusteringPlugin"
                       FILE  "MeanShiftClusteringPlugin.json")
     
 public:
