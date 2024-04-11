@@ -10,15 +10,8 @@
 #include <QDebug>
 #include <QtCore>
 #include <QMessageBox>
-#include <QHBoxLayout>
-#include <QPainter>
 
-#include <assert.h>
-#include <algorithm>
-#include <functional>
-#include <random>
 #include <vector>
-#include <unordered_map>
 
 #include <util/Icon.h>
 

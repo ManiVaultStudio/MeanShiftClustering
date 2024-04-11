@@ -1,12 +1,10 @@
 #pragma once
 
 #include "AnalysisPlugin.h"
-#include "SettingsAction.h"
-
-#include "util/MeanShift.h"
 #include "graphics/OffscreenBuffer.h"
+#include "util/MeanShift.h"
 
-#include <actions/TriggerAction.h>
+#include "SettingsAction.h"
 
 #include <QRandomGenerator>
 
