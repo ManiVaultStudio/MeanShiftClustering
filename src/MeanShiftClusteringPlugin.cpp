@@ -51,7 +51,7 @@ void MeanShiftClusteringPlugin::init()
     QStringList dimensionNames;
     
     if (numberOfDimensions == inputDataset->getDimensionNames().size()) {
-        for (auto dimensionName : inputDataset->getDimensionNames())
+        for (const auto& dimensionName : inputDataset->getDimensionNames())
             dimensionNames << dimensionName;
     }
     else {
@@ -168,7 +168,7 @@ void MeanShiftClusteringPlugin::init()
         getInputDataset<Points>()->getSourceDataset<Points>()->getGlobalIndices(globalIndices);
 
         // Add found clusters
-        for (auto clusterIndicesLocal : clusters)
+        for (auto& clusterIndicesLocal : clusters)
         {
             Cluster cluster;
 
@@ -281,13 +281,13 @@ PluginTriggerActions MeanShiftClusteringPluginFactory::getPluginTriggerActions(c
 {
     PluginTriggerActions pluginTriggerActions;
 
-    const auto getInstance = [this](Dataset<Points> dataset) -> MeanShiftClusteringPlugin* {
+    const auto getInstance = [this](const Dataset<Points>& dataset) -> MeanShiftClusteringPlugin* {
         return dynamic_cast<MeanShiftClusteringPlugin*>(plugins().requestPlugin(getKind(), Datasets({ dataset })));
     };
 
     if (!datasets.isEmpty() && PluginFactory::areAllDatasetsOfTheSameType(datasets, PointType)) {
         auto pluginTriggerAction = new PluginTriggerAction(const_cast<MeanShiftClusteringPluginFactory*>(this), this, "Mean-shift analysis", "Apply mean-shift analysis on each selected dataset(s)", getIcon(), [this, getInstance, datasets](PluginTriggerAction& pluginTriggerAction) -> void {
-            for (auto dataset : datasets)
+            for (const auto& dataset : datasets)
                 getInstance(dataset);
         });
 
