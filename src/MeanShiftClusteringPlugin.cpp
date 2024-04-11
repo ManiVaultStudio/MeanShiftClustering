@@ -15,8 +15,6 @@
 
 #include <util/Icon.h>
 
-#define NO_FILE 0
-
 Q_PLUGIN_METADATA(IID "studio.manivault.MeanShift")
 
 using namespace mv;
