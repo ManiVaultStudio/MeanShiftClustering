@@ -14,3 +14,10 @@ KDE](https://doi.org/10.1109/PACIFICVIS.2011.5742387) implemented in ManiVault's
   <img src="https://github.com/ManiVaultStudio/MeanShiftClustering/assets/58806453/94ac9bf1-9861-45bf-b8dc-cca85a3cc022" align="middle" width="25%" /> </br>
   Cluster-colored embedding of the MNIST dataset (left) and UI of the mean shift analysis plugin (right)
 </p>
+
+## Features
+- Real-time updates of the clustering when adjusting the `sigma` parameter
+- Several colormaps for automatic coloring of clusters
+- Manual color selection for clusters
+
+The plugin requires at least OpenGL 3.3.
