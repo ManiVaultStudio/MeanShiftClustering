@@ -1,5 +1,5 @@
 #include "SettingsAction.h"
-#include "Application.h"
+
 #include "MeanShiftClusteringPlugin.h"
 
 #include <util/Serialization.h>

@@ -1,7 +1,11 @@
 #pragma once
 
-#include "actions/Actions.h"
 #include <actions/ColorMap1DAction.h>
+#include <actions/DecimalAction.h>
+#include <actions/IntegralAction.h>
+#include <actions/OptionAction.h>
+#include <actions/ToggleAction.h>
+#include <actions/TriggerAction.h>
 
 class QMenu;
 class MeanShiftClusteringPlugin;
