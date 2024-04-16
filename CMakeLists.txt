@@ -1,9 +1,17 @@
 cmake_minimum_required(VERSION 3.17)
 
+option(MV_UNITY_BUILD "Combine target source files into batches for faster compilation" OFF)
+
+# -----------------------------------------------------------------------------
+# MeanShiftClustering Plugin
+# -----------------------------------------------------------------------------
 set(PROJECT "MeanShiftClusteringPlugin")
 
 PROJECT(${PROJECT})
 
+# -----------------------------------------------------------------------------
+# CMake Options
+# -----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -15,6 +23,9 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 endif(MSVC)
 
+# -----------------------------------------------------------------------------
+# Set install directory
+# -----------------------------------------------------------------------------
 # Check if the directory to the ManiVault installation has been provided
 if(NOT DEFINED MV_INSTALL_DIR)
     set(MV_INSTALL_DIR "" CACHE PATH "Directory where ManiVault is installed")
@@ -22,9 +33,15 @@ if(NOT DEFINED MV_INSTALL_DIR)
 endif()
 file(TO_CMAKE_PATH ${MV_INSTALL_DIR} MV_INSTALL_DIR)
 
+# -----------------------------------------------------------------------------
+# Dependencies
+# -----------------------------------------------------------------------------
 find_package(Qt6Widgets REQUIRED)
 find_package(Qt6WebEngineWidgets REQUIRED)
 
+# -----------------------------------------------------------------------------
+# Source files
+# -----------------------------------------------------------------------------
 set(SOURCES
     src/MeanShiftClusteringPlugin.h
     src/MeanShiftClusteringPlugin.cpp
@@ -36,12 +53,28 @@ set(SOURCES
 source_group( Plugin FILES ${SOURCES})
 source_group( External FILES ${EXTERNAL_SOURCES})
 
+# -----------------------------------------------------------------------------
+# CMake Target
+# -----------------------------------------------------------------------------
 add_library(${PROJECT} SHARED ${SOURCES} ${EXTERNAL_SOURCES})
 
+# -----------------------------------------------------------------------------
+# Target include directories
+# -----------------------------------------------------------------------------
 target_include_directories(${PROJECT} PRIVATE "${MV_INSTALL_DIR}/$<CONFIGURATION>/include/")
 
+# -----------------------------------------------------------------------------
+# Target properties
+# -----------------------------------------------------------------------------
 target_compile_features(${PROJECT} PRIVATE cxx_std_17)
 
+if(MV_UNITY_BUILD)
+    set_target_properties(${PROJECT} PROPERTIES UNITY_BUILD ON)
+endif()
+
+# -----------------------------------------------------------------------------
+# Target library linking
+# -----------------------------------------------------------------------------
 target_link_libraries(${PROJECT} PRIVATE Qt6::Widgets)
 target_link_libraries(${PROJECT} PRIVATE Qt6::WebEngineWidgets)
 
@@ -57,6 +90,9 @@ target_link_libraries(${PROJECT} PRIVATE "${MV_LINK_LIBRARY}")
 target_link_libraries(${PROJECT} PRIVATE "${POINTDATA_LINK_LIBRARY}")
 target_link_libraries(${PROJECT} PRIVATE "${CLUSTERDATA_LINK_LIBRARY}")
 
+# -----------------------------------------------------------------------------
+# Target installation
+# -----------------------------------------------------------------------------
 install(TARGETS ${PROJECT}
     RUNTIME DESTINATION Plugins COMPONENT PLUGINS # Windows .dll
     LIBRARY DESTINATION Plugins COMPONENT PLUGINS # Linux/Mac .so
@@ -69,6 +105,9 @@ add_custom_command(TARGET ${PROJECT} POST_BUILD
 	--prefix ${MV_INSTALL_DIR}/$<CONFIGURATION>
 )
 
+# -----------------------------------------------------------------------------
+# Misc
+# -----------------------------------------------------------------------------
 # Automatically set the debug environment (command + working directory) for MSVC
 if(MSVC)
     set_property(TARGET ${PROJECT} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<IF:$<CONFIG:DEBUG>,${MV_INSTALL_DIR}/debug,${MV_INSTALL_DIR}/release>)
