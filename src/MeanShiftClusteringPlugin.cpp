@@ -19,6 +19,7 @@ Q_PLUGIN_METADATA(IID "studio.manivault.MeanShift")
 
 using namespace mv;
 using namespace mv::gui;
+using namespace mv::util;
 
 MeanShiftClusteringPlugin::MeanShiftClusteringPlugin(const PluginFactory* factory) :
     AnalysisPlugin(factory),
@@ -33,7 +34,9 @@ MeanShiftClusteringPlugin::MeanShiftClusteringPlugin(const PluginFactory* factor
 void MeanShiftClusteringPlugin::init()
 {
     // Create clusters output dataset
-    setOutputDataset(mv::data().createDataset("Cluster", "Clusters (mean-shift)", getInputDataset()));
+    if (!outputDataInit()) {
+        setOutputDataset(mv::data().createDataset("Cluster", "Clusters (mean-shift)", getInputDataset()));
+    }
 
     // Get input and output datasets
     auto inputDataset  = getInputDataset<Points>();
@@ -260,11 +263,18 @@ bool MeanShiftClusteringPlugin::canCompute() const
 
 void MeanShiftClusteringPlugin::fromVariantMap(const QVariantMap& variantMap)
 {
+    AnalysisPlugin::fromVariantMap(variantMap);
+
+    _settingsAction.fromParentVariantMap(variantMap);
 }
 
 QVariantMap MeanShiftClusteringPlugin::toVariantMap() const
 {
-    return QVariantMap();
+    auto variantMap = AnalysisPlugin::toVariantMap();
+
+    _settingsAction.insertIntoVariantMap(variantMap);
+
+    return variantMap;
 }
 
 QIcon MeanShiftClusteringPluginFactory::getIcon(const QColor& color /*= Qt::black*/) const
