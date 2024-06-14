@@ -5,6 +5,7 @@
 #include <util/Serialization.h>
 
 using namespace mv::gui;
+using namespace mv::util;
 
 SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlugin) :
     GroupAction(meanShiftClusteringPlugin, "SettingsAction", true),
@@ -57,36 +58,32 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
 
 void SettingsAction::fromVariantMap(const QVariantMap& variantMap)
 {
+    GroupAction::fromVariantMap(variantMap);
+
     setEnabled(false);
     {
-        mv::util::variantMapMustContain(variantMap, "Dimension1");
-        mv::util::variantMapMustContain(variantMap, "Dimension2");
-        mv::util::variantMapMustContain(variantMap, "Sigma");
-        mv::util::variantMapMustContain(variantMap, "ColorBy");
-        mv::util::variantMapMustContain(variantMap, "ColorMap");
-        mv::util::variantMapMustContain(variantMap, "RandomSeed");
-        mv::util::variantMapMustContain(variantMap, "UpdateColorsManually");
-
-        _dimensionOneAction.fromVariantMap(variantMap["Dimension1"].toMap());
-        _dimensionTwoAction.fromVariantMap(variantMap["Dimension2"].toMap());
-        _sigmaAction.fromVariantMap(variantMap["Sigma"].toMap());
-        _colorByAction.fromVariantMap(variantMap["ColorBy"].toMap());
-        _colorMapAction.fromVariantMap(variantMap["ColorMap"].toMap());
-        _randomSeedAction.fromVariantMap(variantMap["RandomSeed"].toMap());
-        _updateColorsManuallyAction.fromVariantMap(variantMap["UpdateColorsManually"].toMap());
+        _dimensionOneAction.fromParentVariantMap(variantMap);
+        _dimensionTwoAction.fromParentVariantMap(variantMap);
+        _sigmaAction.fromParentVariantMap(variantMap);
+        _colorByAction.fromParentVariantMap(variantMap);
+        _colorMapAction.fromParentVariantMap(variantMap);
+        _randomSeedAction.fromParentVariantMap(variantMap);
+        _updateColorsManuallyAction.fromParentVariantMap(variantMap);
     }
     setEnabled(true);
 }
 
 QVariantMap SettingsAction::toVariantMap() const
 {
-    return {
-        { "Dimension1", _dimensionOneAction.toVariantMap() },
-        { "Dimension2", _dimensionTwoAction.toVariantMap() },
-        { "Sigma", _sigmaAction.toVariantMap() },
-        { "ColorBy", _colorByAction.toVariantMap() },
-        { "ColorMap", _colorMapAction.toVariantMap() },
-        { "RandomSeed", _randomSeedAction.toVariantMap() },
-        { "UpdateColorsManually", _updateColorsManuallyAction.toVariantMap() },
-    };
+    auto variantMap = GroupAction::toVariantMap();
+
+    _dimensionOneAction.insertIntoVariantMap(variantMap);
+    _dimensionTwoAction.insertIntoVariantMap(variantMap);
+    _sigmaAction.insertIntoVariantMap(variantMap);
+    _colorByAction.insertIntoVariantMap(variantMap);
+    _colorMapAction.insertIntoVariantMap(variantMap);
+    _randomSeedAction.insertIntoVariantMap(variantMap);
+    _updateColorsManuallyAction.insertIntoVariantMap(variantMap);
+
+    return variantMap;
 }
