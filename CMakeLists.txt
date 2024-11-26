@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.21)
 
 option(MV_UNITY_BUILD "Combine target source files into batches for faster compilation" OFF)
 
