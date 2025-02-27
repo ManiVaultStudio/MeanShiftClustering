@@ -56,8 +56,9 @@ class MeanShiftClusteringPluginFactory : public AnalysisPluginFactory
                       FILE  "MeanShiftClusteringPlugin.json")
     
 public:
-    MeanShiftClusteringPluginFactory(void) {}
-    ~MeanShiftClusteringPluginFactory(void) override {}
+    MeanShiftClusteringPluginFactory();
+
+    ~MeanShiftClusteringPluginFactory() override {}
 
     AnalysisPlugin* produce() override;
 

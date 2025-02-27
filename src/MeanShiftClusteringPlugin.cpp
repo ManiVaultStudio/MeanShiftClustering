@@ -277,6 +277,11 @@ QVariantMap MeanShiftClusteringPlugin::toVariantMap() const
     return variantMap;
 }
 
+MeanShiftClusteringPluginFactory::MeanShiftClusteringPluginFactory()
+{
+    setIcon(StyledIcon(createPluginIcon("MS")));
+}
+
 AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()
 {
     return new MeanShiftClusteringPlugin(this);
