@@ -291,7 +291,7 @@ PluginTriggerActions MeanShiftClusteringPluginFactory::getPluginTriggerActions(c
     };
 
     if (!datasets.isEmpty() && PluginFactory::areAllDatasetsOfTheSameType(datasets, PointType)) {
-        auto pluginTriggerAction = new PluginTriggerAction(const_cast<MeanShiftClusteringPluginFactory*>(this), this, "Mean-shift analysis", "Apply mean-shift analysis on each selected dataset(s)", getIcon(), [this, getInstance, datasets](PluginTriggerAction& pluginTriggerAction) -> void {
+        auto pluginTriggerAction = new PluginTriggerAction(const_cast<MeanShiftClusteringPluginFactory*>(this), this, "Mean-shift analysis", "Apply mean-shift analysis on each selected dataset(s)", icon(), [this, getInstance, datasets](PluginTriggerAction& pluginTriggerAction) -> void {
             for (const auto& dataset : datasets)
                 getInstance(dataset);
         });
