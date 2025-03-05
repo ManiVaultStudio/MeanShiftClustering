@@ -277,9 +277,9 @@ QVariantMap MeanShiftClusteringPlugin::toVariantMap() const
     return variantMap;
 }
 
-QIcon MeanShiftClusteringPluginFactory::getIcon(const QColor& color /*= Qt::black*/) const
+MeanShiftClusteringPluginFactory::MeanShiftClusteringPluginFactory()
 {
-    return createPluginIcon("MS", color);
+    setIcon(StyledIcon(createPluginIcon("MS")));
 }
 
 AnalysisPlugin* MeanShiftClusteringPluginFactory::produce()
@@ -296,7 +296,7 @@ PluginTriggerActions MeanShiftClusteringPluginFactory::getPluginTriggerActions(c
     };
 
     if (!datasets.isEmpty() && PluginFactory::areAllDatasetsOfTheSameType(datasets, PointType)) {
-        auto pluginTriggerAction = new PluginTriggerAction(const_cast<MeanShiftClusteringPluginFactory*>(this), this, "Mean-shift analysis", "Apply mean-shift analysis on each selected dataset(s)", getIcon(), [this, getInstance, datasets](PluginTriggerAction& pluginTriggerAction) -> void {
+        auto pluginTriggerAction = new PluginTriggerAction(const_cast<MeanShiftClusteringPluginFactory*>(this), this, "Mean-shift analysis", "Apply mean-shift analysis on each selected dataset(s)", icon(), [this, getInstance, datasets](PluginTriggerAction& pluginTriggerAction) -> void {
             for (const auto& dataset : datasets)
                 getInstance(dataset);
         });
