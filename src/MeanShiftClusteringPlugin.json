@@ -1,5 +1,5 @@
 {
     "name" : "Mean Shift Clustering",
-    "version": "1",
+    "version": "0.6",
     "dependencies" : ["Points", "Cluster"]
 }
