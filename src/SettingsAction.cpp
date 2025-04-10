@@ -16,8 +16,8 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _colorByAction(this, "Color by", QStringList({"Pseudo-random colors", "Color map"}), "Color map"),
     _colorMapAction(this, "Color map"),
     _randomSeedAction(this, "Random seed"),
-    _updateColorsManuallyAction(this, "Update colors manually", false),
-    _applyColorsAction(this, "Apply colors"),
+    _updateColorsManuallyAction(this, "Update clustering manually", false),
+    _applyColorsAction(this, "Update clustering"),
     _computeAction(this, "Compute")
 {
     setText("Settings");
@@ -25,6 +25,8 @@ SettingsAction::SettingsAction(MeanShiftClusteringPlugin* meanShiftClusteringPlu
     _sigmaAction.setUpdateDuringDrag(false);
     _randomSeedAction.setUpdateDuringDrag(false);
     _computeAction.setVisible(false);
+
+    _applyColorsAction.setToolTip("Clusters are updated automatically when settings are changed\n(Unless manual updates are toggled on.)");
 
     addAction(&_dimensionOneAction);
     addAction(&_dimensionTwoAction);

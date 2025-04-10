@@ -249,8 +249,6 @@ void MeanShiftClusteringPlugin::init()
     _meanShift.init();
     _offscreenBuffer.releaseContext();
 
-    // Do an initial computation
-    _settingsAction.getComputeAction().trigger();
 }
 
 bool MeanShiftClusteringPlugin::canCompute() const
