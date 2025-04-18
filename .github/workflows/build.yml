@@ -4,7 +4,7 @@ on:
   push:
   pull_request:
   workflow_dispatch:
-
+        
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
@@ -31,22 +31,20 @@ jobs:
     strategy:
       matrix:
         include: ${{ fromJson(needs.prepare_matrix.outputs.matrix) }}
-            
+
     steps:
       - name: Checkout the source
-        if: github.event_name != 'pull_request'
+        if: ${{ github.event_name != 'pull_request'}}
         uses: actions/checkout@v4
         with:
-          submodules: recursive
-          fetch-depth: 0
+            submodules: recursive
 
-      - name: Checkout the source - pull request
-        if: github.event_name == 'pull_request'
+      - name: Checkout the source (pull_request version)
+        if: ${{ github.event_name == 'pull_request'}}
         uses: actions/checkout@v4
         with:
-          submodules: recursive
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref }}
+            ref: ${{ github.event.pull_request.head.ref }}
+            submodules: recursive
 
       - name: Select Xcode for Mac only
         if: startsWith(runner.os, 'macOS')
@@ -80,7 +78,7 @@ jobs:
           conan-password: ${{secrets.LKEB_UPLOAD_USER_PASSWORD}}
           conan-pem: ${{secrets.LKEB_UPLOAD_CERT_CHAIN}}
           rs_ssh_key: ${{ secrets.RULESSUPPORT_DEPLOY_KEY }}
-    
+
       - name: Linux build
         if: startsWith(matrix.os, 'ubuntu')
         uses: ManiVaultStudio/github-actions/conan_linuxmac_build@main
@@ -96,7 +94,7 @@ jobs:
           conan-pem: ${{secrets.LKEB_UPLOAD_CERT_CHAIN}}
           conan-cc: gcc-${{matrix.build-cversion}}
           conan-cxx: g++-${{matrix.build-cversion}}
-      
+    
       - name: Mac build
         if: startsWith(matrix.os, 'macos')
         uses: ManiVaultStudio/github-actions/conan_linuxmac_build@main
