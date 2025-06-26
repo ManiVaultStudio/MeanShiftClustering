@@ -144,6 +144,22 @@ void MeanShiftClusteringPlugin::init()
 
         QCoreApplication::processEvents();
 
+        auto [xMinIt, xMaxIt] = std::minmax_element(data.begin(), data.end(), [](const mv::Vector2f& a, const mv::Vector2f& b) {
+	        return a.x < b.x;
+        });
+
+        auto [yMinIt, yMaxIt] = std::minmax_element(data.begin(), data.end(), [](const mv::Vector2f& a, const mv::Vector2f& b) {
+            return a.y < b.y;
+        });
+
+        const auto xRange = xMaxIt->x - xMinIt->x;
+        const auto yRange = yMaxIt->y - yMinIt->y;
+
+        for (auto& v : data) {
+            v.x = ((v.x - xMinIt->x) / xRange) - .0f;
+            v.y = ((v.y - yMinIt->y) / yRange) - .0f;
+        }
+
         _meanShift.setData(&data);
 
         std::vector<std::vector<unsigned int>> clusters;
