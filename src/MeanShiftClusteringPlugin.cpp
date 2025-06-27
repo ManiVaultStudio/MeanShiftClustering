@@ -156,8 +156,8 @@ void MeanShiftClusteringPlugin::init()
         const auto yRange = yMaxIt->y - yMinIt->y;
 
         for (auto& v : data) {
-            v.x = ((v.x - xMinIt->x) / xRange) - .0f;
-            v.y = ((v.y - yMinIt->y) / yRange) - .0f;
+            v.x = ((v.x - xMinIt->x) / xRange);
+            v.y = ((v.y - yMinIt->y) / yRange);
         }
 
         _meanShift.setData(&data);
