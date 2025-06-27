@@ -265,6 +265,8 @@ void MeanShiftClusteringPlugin::init()
     _meanShift.init();
     _offscreenBuffer.releaseContext();
 
+    _settingsAction.getComputeAction().trigger();
+
 }
 
 bool MeanShiftClusteringPlugin::canCompute() const
