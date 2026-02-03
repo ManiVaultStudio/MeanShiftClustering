@@ -7,7 +7,10 @@ option(MV_UNITY_BUILD "Combine target source files into batches for faster compi
 # -----------------------------------------------------------------------------
 set(PROJECT "MeanShiftClusteringPlugin")
 
-PROJECT(${PROJECT})
+PROJECT(${PROJECT}
+        DESCRIPTION "Mean shift cluster analysis plugin for ManiVault"
+        LANGUAGES CXX
+)
 
 # -----------------------------------------------------------------------------
 # CMake Options
