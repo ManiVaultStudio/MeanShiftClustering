@@ -36,18 +36,21 @@ find_package(ManiVault COMPONENTS Core PointData ClusterData CONFIG QUIET)
 set(SOURCES
     src/MeanShiftClusteringPlugin.h
     src/MeanShiftClusteringPlugin.cpp
-    src/MeanShiftClusteringPlugin.json
     src/SettingsAction.h
     src/SettingsAction.cpp
 )
 
+set(PLUGININFO
+    PluginInfo.json
+)
+
 source_group( Plugin FILES ${SOURCES})
-source_group( External FILES ${EXTERNAL_SOURCES})
+source_group( Aux FILES ${PLUGININFO})
 
 # -----------------------------------------------------------------------------
 # CMake Target
 # -----------------------------------------------------------------------------
-add_library(${PROJECT} SHARED ${SOURCES} ${EXTERNAL_SOURCES})
+add_library(${PROJECT} SHARED ${SOURCES} ${PLUGININFO})
 
 # -----------------------------------------------------------------------------
 # Target include directories

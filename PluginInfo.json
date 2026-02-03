@@ -1,0 +1,9 @@
+{
+    "name" : "Mean Shift Clustering",
+    "version" :  {
+        "plugin" : "0.7.0",
+        "core" : ["1.3"]
+    },
+    "type" : "Analysis",    
+    "dependencies" : ["Points", "Cluster"]
+}
